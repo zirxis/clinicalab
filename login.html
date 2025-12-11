@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - Clinicalab</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#2563EB',
+                        'soft-teal': '#0891B2',
+                        'warm-orange': '#F59E0B',
+                        'cool-gray': '#64748B',
+                        'success-green': '#059669',
+                        'warning-amber': '#D97706',
+                        'light-blue': '#DBEAFE',
+                        'light-teal': '#CFFAFE'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'tajawal': ['Tajawal', 'sans-serif']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite alternate',
+                        'shimmer': 'shimmer 2s infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'wave': 'wave 20s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .input-with-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .input-with-icon:focus-within {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .password-strength {
+            height: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .password-strength.weak {
+            background: #EF4444;
+            width: 25%;
+        }
+        
+        .password-strength.medium {
+            background: #F59E0B;
+            width: 50%;
+        }
+        
+        .password-strength.strong {
+            background: #10B981;
+            width: 100%;
+        }
+        
+        .social-login-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .social-login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .social-login-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .social-login-btn:hover::after {
+            left: 100%;
+        }
+        
+        .wave-background {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 200px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,181.3C960,181,1056,203,1152,202.7C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x;
+            animation: wave 20s linear infinite;
+            z-index: -1;
+        }
+        
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .login-card {
+                margin: 1rem;
+                padding: 1.5rem !important;
+            }
+            
+            .hero-section {
+                padding: 2rem 1rem !important;
+            }
+        }
+        
+        /* Loading animation */
+        .loading-dots {
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .loading-dots span {
+            width: 8px;
+            height: 8px;
+            margin: 0 3px;
+            background-color: #667eea;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        
+        .loading-dots span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+        
+        .loading-dots span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { 
+                transform: scale(0);
+            } 
+            40% { 
+                transform: scale(1.0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Particles Background -->
+    <div class="particles-container" id="particles-js"></div>
+    
+    <!-- Floating Shapes -->
+    <div class="floating-shapes" style="width: 100px; height: 100px; top: 10%; right: 5%; animation-delay: 0s;"></div>
+    <div class="floating-shapes" style="width: 150px; height: 150px; bottom: 20%; left: 10%; animation-delay: -5s;"></div>
+    <div class="floating-shapes" style="width: 80px; height: 80px; top: 50%; right: 15%; animation-delay: -10s;"></div>
+    
+    <!-- Wave Background -->
+    <div class="wave-background"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                    <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
+                        <div class="w-10 h-10 bg-gradient-to-r from-medical-blue to-soft-teal rounded-lg flex items-center justify-center">
+                            <i class="fas fa-flask text-white text-lg"></i>
+                        </div>
+                        <span class="text-2xl font-bold gradient-text">Clinicalab</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-4 rtl:space-x-reverse">
+                    <a href="index.html" class="text-cool-gray hover:text-medical-blue transition-colors">العودة للرئيسية</a>
+                    <span class="text-cool-gray">|</span>
+                    <a href="register.html" class="text-medical-blue hover:underline">ليس لديك حساب؟ سجل الآن</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-md text-cool-gray hover:text-medical-blue focus:outline-none" id="mobile-menu-button">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="min-h-screen flex items-center justify-center pt-16 px-4">
+        <div class="w-full max-w-6xl">
+            <div class="grid lg:grid-cols-2 gap-8 items-center">
+                <!-- Left Side - Hero -->
+                <div class="hero-section text-center lg:text-right animate__animated animate__fadeInLeft">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
+                        <span class="block">أهلاً وسهلاً</span>
+                        <span class="gradient-text block mt-2">في Clinicalab</span>
+                    </h1>
+                    
+                    <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+                        العودة إلى حسابك تفتح لك عالمًا من الخدمات الطبية المتكاملة.
+                        استمر من حيث توقفت واستفد من جميع ميزاتنا.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-center lg:justify-start space-x-4 rtl:space-x-reverse">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-bolt text-yellow-300 text-xl"></i>
+                            </div>
+                            <div class="text-right">
+                                <h3 class="text-white font-bold text-lg">حجز فوري</h3>
+                                <p class="text-blue-100">احجز في أفضل المختبرات خلال ثوانٍ</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-center lg:justify-start space-x-4 rtl:space-x-reverse">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-chart-line text-green-300 text-xl"></i>
+                            </div>
+                            <div class="text-right">
+                                <h3 class="text-white font-bold text-lg">مقارنة ذكية</h3>
+                                <p class="text-blue-100">قارن الأسعار والخدمات بذكاء</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-center lg:justify-start space-x-4 rtl:space-x-reverse">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-blue-300 text-xl"></i>
+                            </div>
+                            <div class="text-right">
+                                <h3 class="text-white font-bold text-lg">أمان تام</h3>
+                                <p class="text-blue-100">بياناتك محمية بأفضل أنظمة الأمان</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Side - Login Form -->
+                <div class="login-container rounded-3xl p-8 animate__animated animate__fadeInRight">
+                    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                        <!-- Form Header -->
+                        <div class="bg-gradient-to-r from-medical-blue to-soft-teal p-6 text-white text-center">
+                            <h2 class="text-3xl font-bold">تسجيل الدخول</h2>
+                            <p class="text-blue-100 mt-2">أدخل بياناتك للمتابعة</p>
+                        </div>
+                        
+                        <!-- Login Form -->
+                        <form id="loginForm" class="p-6 space-y-6">
+                            <!-- Email Field -->
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    <i class="fas fa-envelope ml-2 text-medical-blue"></i>
+                                    البريد الإلكتروني
+                                </label>
+                                <div class="input-with-icon relative rounded-lg border border-gray-300 focus-within:border-medical-blue transition-all">
+                                    <input type="email" id="email" required 
+                                           class="w-full px-4 py-3 pr-12 border-0 rounded-lg focus:ring-0 focus:outline-none text-lg"
+                                           placeholder="example@clinicalab.dz">
+                                    <div class="absolute left-3 top-3 text-gray-400">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <div id="email-valid-icon" class="absolute left-3 top-3 hidden text-green-500">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                </div>
+                                <div id="email-error" class="text-red-500 text-sm hidden">
+                                    <i class="fas fa-exclamation-circle ml-1"></i>
+                                    يرجى إدخال بريد إلكتروني صحيح
+                                </div>
+                            </div>
+                            
+                            <!-- Password Field -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="block text-sm font-medium text-gray-700">
+                                        <i class="fas fa-lock ml-2 text-medical-blue"></i>
+                                        كلمة المرور
+                                    </label>
+                                    <a href="forgot-password.html" class="text-sm text-medical-blue hover:underline">
+                                        <i class="fas fa-key ml-1"></i>
+                                        نسيت كلمة المرور؟
+                                    </a>
+                                </div>
+                                <div class="input-with-icon relative rounded-lg border border-gray-300 focus-within:border-medical-blue transition-all">
+                                    <input type="password" id="password" required 
+                                           class="w-full px-4 py-3 pr-12 border-0 rounded-lg focus:ring-0 focus:outline-none text-lg"
+                                           placeholder="••••••••">
+                                    <div class="absolute left-3 top-3 text-gray-400">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <button type="button" id="togglePassword" class="absolute right-3 top-3 text-gray-400 hover:text-medical-blue">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <!-- Password Strength Indicator -->
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-xs text-gray-500">
+                                        <span>قوة كلمة المرور</span>
+                                        <span id="password-strength-text">ضعيفة</span>
+                                    </div>
+                                    <div class="h-1 bg-gray-200 rounded-full overflow-hidden">
+                                        <div id="password-strength-bar" class="password-strength weak h-full rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Remember Me & Terms -->
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center space-x-2 rtl:space-x-reverse cursor-pointer">
+                                    <div class="relative">
+                                        <input type="checkbox" id="remember" class="sr-only peer">
+                                        <div class="w-5 h-5 border-2 border-gray-300 rounded peer-checked:border-medical-blue peer-checked:bg-medical-blue transition-all"></div>
+                                        <div class="absolute inset-0 flex items-center justify-center text-white opacity-0 peer-checked:opacity-100 transition-opacity">
+                                            <i class="fas fa-check text-xs"></i>
+                                        </div>
+                                    </div>
+                                    <span class="text-gray-600 text-sm">تذكرني</span>
+                                </label>
+                                
+                                <label class="flex items-center space-x-2 rtl:space-x-reverse cursor-pointer">
+                                    <span class="text-gray-600 text-sm">أوافق على</span>
+                                    <a href="#" class="text-medical-blue text-sm hover:underline">الشروط</a>
+                                </label>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <button type="submit" id="loginButton" 
+                                    class="w-full py-4 bg-gradient-to-r from-medical-blue to-soft-teal text-white rounded-xl font-bold text-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden group">
+                                <span class="relative z-10 flex items-center justify-center">
+                                    <i class="fas fa-sign-in-alt ml-2"></i>
+                                    <span id="button-text">تسجيل الدخول</span>
+                                    <div id="loading-spinner" class="hidden ml-2">
+                                        <div class="loading-dots">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </span>
+                                <div class="absolute inset-0 bg-gradient-to-r from-soft-teal to-medical-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </button>
+                        </form>
+                        
+                        <!-- Divider -->
+                        <div class="px-6">
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-gray-300"></div>
+                                </div>
+                                <div class="relative flex justify-center text-sm">
+                                    <span class="px-4 bg-white text-gray-500">أو سجل الدخول باستخدام</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Social Login -->
+                        <div class="p-6 pt-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <button class="social-login-btn py-3 bg-blue-600 text-white rounded-lg font-medium flex items-center justify-center space-x-2 rtl:space-x-reverse">
+                                    <i class="fab fa-facebook-f"></i>
+                                    <span>Facebook</span>
+                                </button>
+                                
+                                <button class="social-login-btn py-3 bg-red-500 text-white rounded-lg font-medium flex items-center justify-center space-x-2 rtl:space-x-reverse">
+                                    <i class="fab fa-google"></i>
+                                    <span>Google</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Register Link -->
+                        <div class="px-6 pb-6 text-center bg-gray-50 py-4 rounded-b-2xl">
+                            <p class="text-gray-600">
+                                ليس لديك حساب؟
+                                <a href="register.html" class="text-medical-blue font-semibold hover:underline mr-1">
+                                    إنشاء حساب جديد
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Security Badges -->
+                    <div class="mt-6 flex flex-wrap justify-center gap-4">
+                        <div class="flex items-center space-x-2 rtl:space-x-reverse bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                            <i class="fas fa-shield-alt text-green-400"></i>
+                            <span class="text-white text-sm">أمان SSL</span>
+                        </div>
+                        <div class="flex items-center space-x-2 rtl:space-x-reverse bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                            <i class="fas fa-lock text-blue-400"></i>
+                            <span class="text-white text-sm">تشفير 256-bit</span>
+                        </div>
+                        <div class="flex items-center space-x-2 rtl:space-x-reverse bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+                            <i class="fas fa-user-shield text-purple-400"></i>
+                            <span class="text-white text-sm">خصوصية تامة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Support Button -->
+    <button class="fixed bottom-6 left-6 w-14 h-14 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform z-50">
+        <i class="fas fa-headset text-xl"></i>
+    </button>
+
+    <!-- Back to Top Button -->
+    <button onclick="window.location.href='index.html'" class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-medical-blue to-soft-teal text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform z-50">
+        <i class="fas fa-home text-xl"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Initialize Particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#ffffff" },
+                shape: { type: "circle" },
+                opacity: { value: 0.3, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.2,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" }
+                }
+            }
+        });
+
+        // Password toggle functionality
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Password strength checker
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthBar = document.getElementById('password-strength-bar');
+            const strengthText = document.getElementById('password-strength-text');
+            
+            let strength = 0;
+            
+            // Check password length
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            
+            // Check for mixed case
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            
+            // Check for numbers
+            if (/\d/.test(password)) strength++;
+            
+            // Check for special characters
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            // Update strength bar
+            strengthBar.className = 'password-strength ';
+            if (strength <= 2) {
+                strengthBar.classList.add('weak');
+                strengthText.textContent = 'ضعيفة';
+                strengthText.className = 'text-red-500';
+            } else if (strength <= 3) {
+                strengthBar.classList.add('medium');
+                strengthText.textContent = 'متوسطة';
+                strengthText.className = 'text-yellow-500';
+            } else {
+                strengthBar.classList.add('strong');
+                strengthText.textContent = 'قوية';
+                strengthText.className = 'text-green-500';
+            }
+        });
+
+        // Email validation
+        document.getElementById('email').addEventListener('input', function(e) {
+            const email = e.target.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const validIcon = document.getElementById('email-valid-icon');
+            const errorDiv = document.getElementById('email-error');
+            
+            if (emailRegex.test(email)) {
+                validIcon.classList.remove('hidden');
+                errorDiv.classList.add('hidden');
+            } else if (email.length > 0) {
+                validIcon.classList.add('hidden');
+                errorDiv.classList.remove('hidden');
+            } else {
+                validIcon.classList.add('hidden');
+                errorDiv.classList.add('hidden');
+            }
+        });
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const button = document.getElementById('loginButton');
+            const buttonText = document.getElementById('button-text');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            
+            // Show loading state
+            button.disabled = true;
+            buttonText.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+            
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Show success message
+            Swal.fire({
+                title: 'تم تسجيل الدخول بنجاح!',
+                text: 'مرحباً بعودتك إلى Clinicalab',
+                icon: 'success',
+                confirmButtonText: 'متابعة',
+                confirmButtonColor: '#2563EB',
+                background: '#f8fafc',
+                backdrop: 'rgba(0,0,0,0.4)',
+                allowOutsideClick: false
+            }).then(() => {
+                // Redirect to dashboard or home page
+                window.location.href = 'index.html';
+            });
+        });
+
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            // You can add mobile menu functionality here
+            alert('قائمة الجوال قيد التطوير');
+        });
+
+        // Add floating animation to elements
+        document.querySelectorAll('.floating-element').forEach((el, index) => {
+            el.style.animationDelay = `${index * 2}s`;
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + Enter to submit form
+            if (e.ctrlKey && e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+            
+            // Escape to clear form
+            if (e.key === 'Escape') {
+                document.getElementById('loginForm').reset();
+            }
+        });
+    </script>
+</body>
+</html>

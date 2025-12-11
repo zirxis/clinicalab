@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بحث عن مختبرات - Clinicalab</title>
+    <meta name="description" content="ابحث عن أفضل مختبرات التحاليل الطبية في الجزائر. قارن الأسعار والخدمات واحجز موعدك بسهولة.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#2563EB',
+                        'soft-teal': '#0891B2',
+                        'warm-orange': '#F59E0B',
+                        'cool-gray': '#64748B',
+                        'success-green': '#059669',
+                        'warning-amber': '#D97706'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'tajawal': ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .filter-sidebar {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            backdrop-filter: blur(10px);
+        }
+        
+        .lab-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .lab-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .price-range-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #e2e8f0;
+            outline: none;
+        }
+        
+        .price-range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2563EB;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+        }
+        
+        .price-range-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2563EB;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #2563EB, #0891B2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .comparison-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body class="font-tajawal bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <img src="resources/logo.png" alt="Clinicalab Logo" class="h-10 w-10">
+                    <span class="text-2xl font-bold gradient-text">Clinicalab</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-cool-gray hover:text-medical-blue transition-colors">الرئيسية</a>
+                    <a href="#" class="text-medical-blue font-medium hover:text-soft-teal transition-colors">بحث عن مختبرات</a>
+                    <a href="#services" class="text-cool-gray hover:text-medical-blue transition-colors">الخدمات</a>
+                    <a href="#how-it-works" class="text-cool-gray hover:text-medical-blue transition-colors">كيفية العمل</a>
+                </div>
+                
+                <div class="flex items-center space-x-4" id="user-menu">
+                    <button class="hidden md:block px-4 py-2 text-medical-blue border border-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all" onclick="openLoginModal()">
+                        تسجيل دخول
+                    </button>
+                    <button class="px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all" onclick="openRegisterModal()">
+                        إنشاء حساب
+                    </button>
+                </div>
+
+                <!-- User Auth Button -->
+                <div id="auth-button" class="flex items-center space-x-4">
+                    <div class="relative group">
+                        <button id="user-avatar-btn" class="w-10 h-10 rounded-full focus:outline-none" style="display:none;">
+                        </button>
+                        <div id="user-dropdown" class="hidden absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-50">
+                            <a href="profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-lg" id="profile-link">الملف الشخصي</a>
+                            <a href="bookings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">حجوزاتي</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">المفضلة</a>
+                            <hr class="my-2">
+                            <button onclick="authSystem.logout()" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-b-lg" id="logout-btn">تسجيل خروج</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search Header -->
+    <section class="pt-20 pb-8 bg-gradient-to-r from-medical-blue to-soft-teal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-white mb-8">
+                <h1 class="text-4xl font-bold mb-4">ابحث عن مختبر التحاليل المناسب</h1>
+                <p class="text-xl opacity-90">قارن الأسعار، الخدمات، والتقييمات لأفضل خيار</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl p-6 shadow-xl">
+                    <div class="grid md:grid-cols-4 gap-4">
+                        <div class="relative">
+                            <input type="text" id="main-search" placeholder="ابحث عن تحليل أو مختبر..." 
+                                   class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                            <svg class="absolute right-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        
+                        <select id="city-filter" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                            <option value="">جميع الولايات</option>
+                            <option value="algiers">الجزائر العاصمة</option>
+                            <option value="oran">وهران</option>
+                            <option value="constantine">قسنطينة</option>
+                            <option value="annaba">عنابة</option>
+                            <option value="blida">البليدة</option>
+                            <option value="setif">سطيف</option>
+                            <option value="bejaia">بجاية</option>
+                        </select>
+                        
+                        <select id="service-filter" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                            <option value="">جميع الخدمات</option>
+                            <option value="blood">تحاليل الدم</option>
+                            <option value="imaging">الأشعة</option>
+                            <option value="hormones">الهرمونات</option>
+                            <option value="specialized">متخصصة</option>
+                        </select>
+                        
+                        <button onclick="performAdvancedSearch()" class="px-6 py-3 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all font-semibold">
+                            بحث متقدم
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex gap-8">
+            <!-- Filters Sidebar -->
+            <div class="w-80 filter-sidebar rounded-2xl p-6 h-fit sticky top-24">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-900">تصفية النتائج</h3>
+                    <button onclick="clearAllFilters()" class="text-medical-blue hover:text-blue-700 text-sm">
+                        مسح الكل
+                    </button>
+                </div>
+                
+                <!-- Price Range -->
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-900 mb-3">نطاق السعر</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm text-cool-gray">
+                            <span>1,000 دج</span>
+                            <span>10,000 دج</span>
+                        </div>
+                        <input type="range" id="price-range" min="1000" max="10000" value="5000" 
+                               class="price-range-slider w-full">
+                        <div class="text-center">
+                            <span class="text-medical-blue font-semibold">حتى <span id="price-value">5,000</span> دج</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rating Filter -->
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-900 mb-3">التقييم</h4>
+                    <div class="space-y-2">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="rating-filter" value="5" class="mr-2">
+                            <div class="flex text-yellow-400 mr-2">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm text-cool-gray">(5 نجوم)</span>
+                        </label>
+                        
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="rating-filter" value="4" class="mr-2">
+                            <div class="flex text-yellow-400 mr-2">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm text-cool-gray">(4+ نجوم)</span>
+                        </label>
+                        
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="rating-filter" value="3" class="mr-2">
+                            <div class="flex text-yellow-400 mr-2">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm text-cool-gray">(3+ نجوم)</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Availability Filter -->
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-900 mb-3">التوافر</h4>
+                    <div class="space-y-2">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="availability-filter" value="today" class="mr-2">
+                            <span class="mr-2 text-sm">متاح اليوم</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="availability-filter" value="tomorrow" class="mr-2">
+                            <span class="mr-2 text-sm">متاح غداً</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="availability-filter" value="week" class="mr-2">
+                            <span class="mr-2 text-sm">هذا الأسبوع</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Equipment Filter -->
+                <div class="mb-6">
+                    <h4 class="font-semibold text-gray-900 mb-3">المعدات</h4>
+                    <div class="space-y-2">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="equipment-filter" value="modern" class="mr-2">
+                            <span class="mr-2 text-sm">معدات حديثة</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="equipment-filter" value="digital" class="mr-2">
+                            <span class="mr-2 text-sm">رقمية متقدمة</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="equipment-filter" value="certified" class="mr-2">
+                            <span class="mr-2 text-sm">معتمدة دولياً</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="flex-1">
+                <!-- Results Header -->
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">نتائج البحث</h2>
+                        <p class="text-cool-gray">تم العثور على <span id="results-count">24</span> مختبر</p>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <select id="sort-by" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue">
+                            <option value="relevance">الأكثر تطابقاً</option>
+                            <option value="rating">الأعلى تقييماً</option>
+                            <option value="price-low">السعر: من الأقل</option>
+                            <option value="price-high">السعر: من الأعلى</option>
+                            <option value="distance">الأقرب</option>
+                        </select>
+                        
+                        <button onclick="toggleComparisonPanel()" class="relative px-4 py-2 bg-warm-orange text-white rounded-lg hover:bg-orange-600 transition-all">
+                            <span class="comparison-badge absolute -top-2 -left-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center" id="comparison-count">0</span>
+                            مقارنة
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Lab Cards Grid -->
+                <div id="labs-grid" class="grid gap-6">
+                    <!-- Lab Card 1 -->
+                    <div class="lab-card bg-white rounded-2xl p-6 shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center">
+                                <img src="https://kimi-web-img.moonshot.cn/img/amlcdn.accessmedlab.com/25d9d31373adc1a4f001fb976817db55a6a3e9ab.png" alt="Lab Image" class="w-20 h-20 rounded-lg object-cover">
+                                <div class="mr-4">
+                                    <h3 class="text-xl font-bold text-gray-900">مختبر الصحة الدقيقة</h3>
+                                    <p class="text-cool-gray">الجزائر العاصمة، حيدرة</p>
+                                    <div class="flex items-center mt-1">
+                                        <div class="flex text-yellow-400 mr-2">
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="text-sm text-cool-gray">4.8 (245 تقييم)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col items-end space-y-2">
+                                <button onclick="addToComparison('lab1')" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg hover:bg-medical-blue hover:text-white transition-all text-sm">
+                                    + مقارنة
+                                </button>
+                                <span class="text-sm text-success-green font-semibold">متاح اليوم</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-3 gap-4 mb-4">
+                            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                <div class="text-lg font-bold text-medical-blue">2,500 دج</div>
+                                <div class="text-sm text-cool-gray">تحاليل دم شاملة</div>
+                            </div>
+                            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                <div class="text-lg font-bold text-medical-blue">1,800 دج</div>
+                                <div class="text-sm text-cool-gray">فحص الكلى والكبد</div>
+                            </div>
+                            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                <div class="text-lg font-bold text-medical-blue">3,200 دج</div>
+                                <div class="text-sm text-cool-gray">تحاليل هرمونات</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4 text-sm text-cool-gray">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    2.5 كم
+                                </span>
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    08:00 - 18:00
+                                </span>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button onclick="viewLabDetails('lab1')" class="px-4 py-2 border border-medical-blue text-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all">
+                                    التفاصيل
+                                </button>
+                                <button onclick="bookLab('lab1')" class="px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all">
+                                    حجز الآن
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Lab Card 2 -->
+                    <div class="lab-card bg-white rounded-2xl p-6 shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center">
+                                <img src="https://kimi-web-img.moonshot.cn/img/longolabs.com/24531525e9b8dc12b513e9f8cabc95fc129277a6.jpg" alt="Lab Image" class="w-20 h-20 rounded-lg object-cover">
+                                <div class="mr-4">
+                                    <h3 class="text-xl font-bold text-gray-900">مختبر برايت الطبي</h3>
+                                    <p class="text-cool-gray">وهران، وسط المدينة</p>
+                                    <div class="flex items-center mt-1">
+                                        <div class="flex text-yellow-400 mr-2">
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="text-sm text-cool-gray">4.6 (189 تقييم)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col items-end space-y-2">
+                                <button onclick="addToComparison('lab2')" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg hover:bg-medical-blue hover:text-white transition-all text-sm">
+                                    + مقارنة
+                                </button>
+                                <span class="text-sm text-success-green font-semibold">متاح غداً</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-3 gap-4 mb-4">
+                            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                <div class="text-lg font-bold text-medical-blue">8,000 دج</div>
+                                <div class="text-sm text-cool-gray">أشعة رنين مغناطيسي</div>
+                            </div>
+                            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                <div class="text-lg font-bold text-medical-blue">3,200 دج</div>
+                                <div class="text-sm text-cool-gray">تحاليل هرمونات</div>
+                            </div>
+                            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                <div class="text-lg font-bold text-medical-blue">1,500 دج</div>
+                                <div class="text-sm text-cool-gray">فحص السكري</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4 text-sm text-cool-gray">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    1.8 كم
+                                </span>
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    07:30 - 19:00
+                                </span>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button onclick="viewLabDetails('lab2')" class="px-4 py-2 border border-medical-blue text-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all">
+                                    التفاصيل
+                                </button>
+                                <button onclick="bookLab('lab2')" class="px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all">
+                                    حجز الآن
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Lab Card 3 -->
+                    <div class="lab-card bg-white rounded-2xl p-6 shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center">
+                                <img src="https://kimi-web-img.moonshot.cn/img/www.crbgroup.com/08ecbc25e160241349824c507decd9a3071aa8d2.jpg" alt="Lab Image" class="w-20 h-20 rounded-lg object-cover">
+                                <div class="mr-4">
+                                    <h3 class="text-xl font-bold text-gray-900">مختبر كير كلينيك</h3>
+                                    <p class="text-cool-gray">قسنطينة، العاصمة</p>
+                                    <div class="flex items-center mt-1">
+                                        <div class="flex text-yellow-400 mr-2">
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="text-sm text-cool-gray">4.9 (312 تقييم)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col items-end space-y-2">
+                                <button onclick="addToComparison('lab3')" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg hover:bg-medical-blue hover:text-white transition-all text-sm">
+                                    + مقارنة
+                                </button>
+                                <span class="text-sm text-success-green font-semibold">متاح هذا الأسبوع</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-3 gap-4 mb-4">
+                            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                <div class="text-lg font-bold text-medical-blue">1,200 دج</div>
+                                <div class="text-sm text-cool-gray">فحص السكري</div>
+                            </div>
+                            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                <div class="text-lg font-bold text-medical-blue">2,800 دج</div>
+                                <div class="text-sm text-cool-gray">تحاليل الغدة الدرقية</div>
+                            </div>
+                            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                <div class="text-lg font-bold text-medical-blue">4,500 دج</div>
+                                <div class="text-sm text-cool-gray">تحاليل فيروسات</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4 text-sm text-cool-gray">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    3.1 كم
+                                </span>
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    08:00 - 17:30
+                                </span>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button onclick="viewLabDetails('lab3')" class="px-4 py-2 border border-medical-blue text-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all">
+                                    التفاصيل
+                                </button>
+                                <button onclick="bookLab('lab3')" class="px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all">
+                                    حجز الآن
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Load More Button -->
+                <div class="text-center mt-8">
+                    <button onclick="loadMoreResults()" class="px-8 py-3 border-2 border-medical-blue text-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all font-semibold">
+                        تحميل المزيد من النتائج
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparison Panel -->
+    <div id="comparison-panel" class="fixed left-0 top-0 h-full w-96 comparison-panel shadow-2xl transform -translate-x-full transition-transform duration-300 z-40">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900">مقارنة المختبرات</h3>
+                <button onclick="toggleComparisonPanel()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="comparison-content" class="space-y-4">
+                <div class="text-center text-cool-gray py-8">
+                    <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    <p>اختر مختبرات للمقارنة</p>
+                    <p class="text-sm mt-2">يمكنك مقارنة حتى 3 مختبرات</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <button onclick="performComparison()" class="w-full px-4 py-3 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all font-semibold" disabled id="compare-button">
+                    إجراء المقارنة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-4 mb-6">
+                    <img src="resources/logo.png" alt="Clinicalab Logo" class="h-12 w-12">
+                    <span class="text-3xl font-bold gradient-text">Clinicalab</span>
+                </div>
+                
+                <p class="text-gray-400 mb-6 max-w-2xl mx-auto">
+                    المنصة الجزائرية الرائدة لربط المرضى بمختبرات التحاليل الطبية الموثوقة. 
+                    شفافية في الأسعار، سهولة في الحجز، وموثوقية في النتائج.
+                </p>
+                
+                <div class="flex justify-center space-x-8 mb-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">من نحن</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">الشروط والأحكام</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">سياسة الخصوصية</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">اتصل بنا</a>
+                </div>
+                
+                <div class="border-t border-gray-800 pt-6">
+                    <p class="text-gray-400">
+                        © 2025 Clinicalab. جميع الحقوق محفوظة. منصة جزائرية للخدمات الطبية.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Search page specific JavaScript
+        let comparisonList = [];
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePriceRange();
+            initializeFilters();
+            loadSearchResults();
+        });
+        
+        // Price range slider
+        function initializePriceRange() {
+            const priceRange = document.getElementById('price-range');
+            const priceValue = document.getElementById('price-value');
+            
+            priceRange.addEventListener('input', function() {
+                priceValue.textContent = parseInt(this.value).toLocaleString();
+                filterResults();
+            });
+        }
+        
+        // Initialize filters
+        function initializeFilters() {
+            const filters = document.querySelectorAll('.rating-filter, .availability-filter, .equipment-filter');
+            filters.forEach(filter => {
+                filter.addEventListener('change', filterResults);
+            });
+            
+            document.getElementById('city-filter').addEventListener('change', filterResults);
+            document.getElementById('service-filter').addEventListener('change', filterResults);
+            document.getElementById('sort-by').addEventListener('change', sortResults);
+        }
+        
+        // Filter results based on criteria
+        function filterResults() {
+            // In a real app, this would filter the actual results
+            console.log('Filtering results...');
+            animateLabCards();
+        }
+        
+        // Sort results
+        function sortResults() {
+            // In a real app, this would sort the actual results
+            console.log('Sorting results...');
+            animateLabCards();
+        }
+        
+        // Animate lab cards
+        function animateLabCards() {
+            const cards = document.querySelectorAll('.lab-card');
+            anime({
+                targets: cards,
+                opacity: [0.7, 1],
+                scale: [0.98, 1],
+                duration: 300,
+                delay: anime.stagger(100),
+                easing: 'easeOutQuart'
+            });
+        }
+        
+        // Load search results
+        function loadSearchResults() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const query = urlParams.get('q');
+            
+            if (query) {
+                document.getElementById('main-search').value = query;
+                // Perform search with query
+                console.log('Searching for:', query);
+            }
+        }
+        
+        // Advanced search
+        function performAdvancedSearch() {
+            const searchQuery = document.getElementById('main-search').value;
+            const city = document.getElementById('city-filter').value;
+            const service = document.getElementById('service-filter').value;
+            
+            // Build search URL
+            let searchUrl = 'search.html?';
+            if (searchQuery) searchUrl += `q=${encodeURIComponent(searchQuery)}&`;
+            if (city) searchUrl += `city=${city}&`;
+            if (service) searchUrl += `service=${service}&`;
+            
+            // Redirect to search results
+            window.location.href = searchUrl.slice(0, -1); // Remove trailing &
+        }
+        
+        // Clear all filters
+        function clearAllFilters() {
+            document.getElementById('price-range').value = 5000;
+            document.getElementById('price-value').textContent = '5,000';
+            document.getElementById('city-filter').value = '';
+            document.getElementById('service-filter').value = '';
+            
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+            
+            filterResults();
+        }
+        
+        // Comparison functions
+        function addToComparison(labId) {
+            if (comparisonList.includes(labId)) {
+                showNotification('المختبر already in comparison list', 'info');
+                return;
+            }
+            
+            if (comparisonList.length >= 3) {
+                showNotification('يمكنك مقارنة 3 مختبرات كحد أقصى', 'error');
+                return;
+            }
+            
+            comparisonList.push(labId);
+            updateComparisonPanel();
+            updateComparisonCount();
+            showNotification('تمت إضافة المختبر إلى قائمة المقارنة', 'success');
+        }
+        
+        function removeFromComparison(labId) {
+            comparisonList = comparisonList.filter(id => id !== labId);
+            updateComparisonPanel();
+            updateComparisonCount();
+            showNotification('تمت إزالة المختبر من قائمة المقارنة', 'info');
+        }
+        
+        function updateComparisonPanel() {
+            const content = document.getElementById('comparison-content');
+            const compareButton = document.getElementById('compare-button');
+            
+            if (comparisonList.length === 0) {
+                content.innerHTML = `
+                    <div class="text-center text-cool-gray py-8">
+                        <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <p>اختر مختبرات للمقارنة</p>
+                        <p class="text-sm mt-2">يمكنك مقارنة حتى 3 مختبرات</p>
+                    </div>
+                `;
+                compareButton.disabled = true;
+            } else {
+                // Mock lab data for comparison
+                const labData = {
+                    'lab1': { name: 'مختبر الصحة الدقيقة', city: 'الجزائر العاصمة' },
+                    'lab2': { name: 'مختبر برايت الطبي', city: 'وهران' },
+                    'lab3': { name: 'مختبر كير كلينيك', city: 'قسنطينة' }
+                };
+                
+                content.innerHTML = comparisonList.map(labId => `
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-semibold text-gray-900">${labData[labId].name}</h4>
+                            <button onclick="removeFromComparison('${labId}')" class="text-red-500 hover:text-red-700">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-sm text-cool-gray">${labData[labId].city}</p>
+                    </div>
+                `).join('');
+                
+                compareButton.disabled = comparisonList.length < 2;
+            }
+        }
+        
+        function updateComparisonCount() {
+            document.getElementById('comparison-count').textContent = comparisonList.length;
+        }
+        
+        function toggleComparisonPanel() {
+            const panel = document.getElementById('comparison-panel');
+            panel.classList.toggle('-translate-x-full');
+        }
+        
+        function performComparison() {
+            if (comparisonList.length >= 2) {
+                const comparisonQuery = comparisonList.join(',');
+                window.location.href = `comparison.html?labs=${comparisonQuery}`;
+            }
+        }
+        
+        // Load more results
+        function loadMoreResults() {
+            showNotification('جاري تحميل المزيد من النتائج...', 'info');
+            // In a real app, this would load more results from the server
+        }
+        
+        // Notification function (reused from main.js)
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 ${
+                type === 'success' ? 'bg-success-green text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                'bg-medical-blue text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+
+    <!-- Login Modal -->
+    <div id="login-modal" style="display: none;" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4" onclick="event.stopPropagation()">
+            <div class="bg-gradient-to-r from-medical-blue to-soft-teal p-6 text-white">
+                <h2 class="text-2xl font-bold">تسجيل الدخول</h2>
+                <p class="text-blue-100 mt-2">أهلاً وسهلاً في Clinicalab</p>
+            </div>
+
+            <form id="login-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">البريد الإلكتروني</label>
+                    <input type="email" id="login-email" required placeholder="your@email.com"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</label>
+                    <input type="password" id="login-password" required placeholder="••••••••"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-gradient-to-r from-medical-blue to-soft-teal text-white rounded-lg font-semibold hover:shadow-lg transition-all">
+                    تسجيل الدخول
+                </button>
+            </form>
+
+            <div class="px-6 pb-6 text-center">
+                <p class="text-gray-600">
+                    ليس لديك حساب؟
+                    <button onclick="switchToRegister()" class="text-medical-blue hover:underline font-semibold">
+                        إنشاء حساب جديد
+                    </button>
+                </p>
+            </div>
+
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" style="display: none;" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 my-8" onclick="event.stopPropagation()">
+            <div class="bg-gradient-to-r from-medical-blue to-soft-teal p-6 text-white">
+                <h2 class="text-2xl font-bold">إنشاء حساب جديد</h2>
+                <p class="text-blue-100 mt-2">انضم إلى مجتمع Clinicalab</p>
+            </div>
+
+            <form id="register-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">الاسم الكامل</label>
+                    <input type="text" id="register-fullname" required placeholder="أحمد محمد"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">البريد الإلكتروني</label>
+                    <input type="email" id="register-email" required placeholder="your@email.com"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">رقم الهاتف</label>
+                    <input type="tel" id="register-phone" required placeholder="0661234567"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</label>
+                    <input type="password" id="register-password" required placeholder="••••••••"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">تأكيد كلمة المرور</label>
+                    <input type="password" id="register-confirm-password" required placeholder="••••••••"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-gradient-to-r from-medical-blue to-soft-teal text-white rounded-lg font-semibold hover:shadow-lg transition-all">
+                    إنشاء الحساب
+                </button>
+            </form>
+
+            <div class="px-6 pb-6 text-center">
+                <p class="text-gray-600">
+                    هل لديك حساب؟
+                    <button onclick="switchToLogin()" class="text-medical-blue hover:underline font-semibold">
+                        تسجيل الدخول
+                    </button>
+                </p>
+            </div>
+
+            <button onclick="closeRegisterModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

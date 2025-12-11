@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مختبر الصحة الدقيقة - التفاصيل والحجز - Clinicalab</title>
+    <meta name="description" content="تفاصيل مختبر الصحة الدقيقة للتحاليل الطبية. شاهد الخدمات، الأسعار، المعدات، واحجز موعدك مباشرة.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <!-- Splide CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#2563EB',
+                        'soft-teal': '#0891B2',
+                        'warm-orange': '#F59E0B',
+                        'cool-gray': '#64748B',
+                        'success-green': '#059669',
+                        'warning-amber': '#D97706'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'tajawal': ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #2563EB, #0891B2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .service-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        
+        .booking-calendar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .time-slot {
+            transition: all 0.2s ease;
+        }
+        
+        .time-slot:hover {
+            transform: scale(1.05);
+        }
+        
+        .time-slot.selected {
+            background: #2563EB;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .time-slot.unavailable {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+        
+        .review-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            backdrop-filter: blur(10px);
+        }
+        
+        .equipment-item {
+            transition: all 0.3s ease;
+        }
+        
+        .equipment-item:hover {
+            background: #f1f5f9;
+            transform: translateX(4px);
+        }
+        
+        .doctor-card {
+            transition: all 0.3s ease;
+        }
+        
+        .doctor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="font-tajawal bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <img src="resources/logo.png" alt="Clinicalab Logo" class="h-10 w-10">
+                    <span class="text-2xl font-bold gradient-text">Clinicalab</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-cool-gray hover:text-medical-blue transition-colors">الرئيسية</a>
+                    <a href="search.html" class="text-cool-gray hover:text-medical-blue transition-colors">بحث عن مختبرات</a>
+                    <a href="#" class="text-medical-blue font-medium hover:text-soft-teal transition-colors">التفاصيل</a>
+                    <a href="#services" class="text-cool-gray hover:text-medical-blue transition-colors">الخدمات</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="hidden md:block px-4 py-2 text-medical-blue border border-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all">
+                        تسجيل دخول
+                    </button>
+                    <button class="px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all">
+                        إنشاء حساب
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Lab Header -->
+    <section class="pt-20 pb-8 bg-gradient-to-r from-medical-blue to-soft-teal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-white">
+                <div class="flex items-center mb-4">
+                    <a href="search.html" class="flex items-center text-white/80 hover:text-white transition-colors">
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        رجوع إلى البحث
+                    </a>
+                </div>
+                
+                <div class="flex flex-col lg:flex-row items-start gap-8">
+                    <div class="flex-1">
+                        <h1 class="text-4xl font-bold mb-4">مختبر الصحة الدقيقة</h1>
+                        <div class="flex flex-wrap items-center gap-4 mb-4">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                الجزائر العاصمة، حيدرة
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                08:00 - 18:00
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                </svg>
+                                021 123 456
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-4">
+                            <div class="flex text-yellow-400">
+                                <svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-6 h-6 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                            </div>
+                            <span class="text-xl font-semibold">4.8</span>
+                            <span class="text-white/80">(245 تقييم)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col gap-4">
+                        <button onclick="bookLab('lab1')" class="px-8 py-4 bg-white text-medical-blue rounded-xl hover:bg-gray-100 transition-all font-semibold text-lg shadow-lg">
+                            احجز موعد الآن
+                        </button>
+                        <button onclick="addToComparison('lab1')" class="px-8 py-4 border-2 border-white text-white rounded-xl hover:bg-white hover:text-medical-blue transition-all font-semibold text-lg">
+                            + أضف إلى المقارنة
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Left Column - Lab Info -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Lab Images Gallery -->
+                <section class="bg-white rounded-2xl p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">صور المختبر</h2>
+                    <div class="splide" id="lab-gallery">
+                        <div class="splide__track">
+                            <ul class="splide__list">
+                                <li class="splide__slide">
+                                    <img src="https://kimi-web-img.moonshot.cn/img/amlcdn.accessmedlab.com/25d9d31373adc1a4f001fb976817db55a6a3e9ab.png" alt="Laboratory Interior" class="w-full h-64 object-cover rounded-lg">
+                                </li>
+                                <li class="splide__slide">
+                                    <img src="https://kimi-web-img.moonshot.cn/img/longolabs.com/24531525e9b8dc12b513e9f8cabc95fc129277a6.jpg" alt="Medical Equipment" class="w-full h-64 object-cover rounded-lg">
+                                </li>
+                                <li class="splide__slide">
+                                    <img src="https://kimi-web-img.moonshot.cn/img/www.crbgroup.com/08ecbc25e160241349824c507decd9a3071aa8d2.jpg" alt="Laboratory Workspace" class="w-full h-64 object-cover rounded-lg">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Services & Pricing -->
+                <section class="bg-white rounded-2xl p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">الخدمات والأسعار</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Blood Tests -->
+                        <div class="service-card border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-medical-blue/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-medical-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">تحاليل الدم</h3>
+                                    <p class="text-sm text-cool-gray">فحوصات دم شاملة ومتخصصة</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">تحليل دم شامل</span>
+                                    <span class="font-semibold text-medical-blue">2,500 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">فحص الكلى والكبد</span>
+                                    <span class="font-semibold text-medical-blue">1,800 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">تحليل سكر تراكمي</span>
+                                    <span class="font-semibold text-medical-blue">1,200 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">تحاليف دهون الدم</span>
+                                    <span class="font-semibold text-medical-blue">1,500 دج</span>
+                                </div>
+                            </div>
+                            
+                            <button onclick="selectService('blood-tests')" class="w-full mt-4 px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all">
+                                اختر هذه الخدمة
+                            </button>
+                        </div>
+                        
+                        <!-- Hormone Tests -->
+                        <div class="service-card border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-soft-teal/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-soft-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">الهرمونات</h3>
+                                    <p class="text-sm text-cool-gray">تحاليل هرمونات متقدمة</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">تحاليل الغدة الدرقية</span>
+                                    <span class="font-semibold text-medical-blue">2,800 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">هرمونات الحمل</span>
+                                    <span class="font-semibold text-medical-blue">1,800 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">هرمونات الذكورة والأنوثة</span>
+                                    <span class="font-semibold text-medical-blue">3,500 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">هرمونات النمو</span>
+                                    <span class="font-semibold text-medical-blue">2,200 دج</span>
+                                </div>
+                            </div>
+                            
+                            <button onclick="selectService('hormone-tests')" class="w-full mt-4 px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all">
+                                اختر هذه الخدمة
+                            </button>
+                        </div>
+                        
+                        <!-- Specialized Tests -->
+                        <div class="service-card border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-warm-orange/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-warm-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">فحوصات متخصصة</h3>
+                                    <p class="text-sm text-cool-gray">تحاليل طبية متقدمة</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">تحاليل فيروسات</span>
+                                    <span class="font-semibold text-medical-blue">4,500 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">تحاليل سرطان</span>
+                                    <span class="font-semibold text-medical-blue">6,000 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">تحاليل حساسية</span>
+                                    <span class="font-semibold text-medical-blue">3,800 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">تحاليل وراثية</span>
+                                    <span class="font-semibold text-medical-blue">8,500 دج</span>
+                                </div>
+                            </div>
+                            
+                            <button onclick="selectService('specialized-tests')" class="w-full mt-4 px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all">
+                                اختر هذه الخدمة
+                            </button>
+                        </div>
+                        
+                        <!-- Imaging -->
+                        <div class="service-card border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-success-green/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-success-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">الأشعة</h3>
+                                    <p class="text-sm text-cool-gray">أشعة متقدمة ورقمية</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">أشعة X</span>
+                                    <span class="font-semibold text-medical-blue">1,500 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">أشعة CT</span>
+                                    <span class="font-semibold text-medical-blue">5,000 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">أشعة MRI</span>
+                                    <span class="font-semibold text-medical-blue">8,000 دج</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-cool-gray">أشعة ultrasound</span>
+                                    <span class="font-semibold text-medical-blue">2,500 دج</span>
+                                </div>
+                            </div>
+                            
+                            <button onclick="selectService('imaging')" class="w-full mt-4 px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all">
+                                اختر هذه الخدمة
+                            </button>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Medical Equipment -->
+                <section class="bg-white rounded-2xl p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">المعدات الطبية</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="equipment-item p-4 rounded-lg border border-gray-200">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-medical-blue/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-medical-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">أجهزة تحليل الدم الأوتوماتيكية</h3>
+                                    <p class="text-sm text-cool-gray">Coulter Counter - أحدث أجهزة العدادات الخلوية</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="equipment-item p-4 rounded-lg border border-gray-200">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-soft-teal/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-soft-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">أجهزة الأشعة الرقمية</h3>
+                                    <p class="text-sm text-cool-gray">DR System - أنظمة الأشعة الرقمية المباشرة</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="equipment-item p-4 rounded-lg border border-gray-200">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-warm-orange/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-warm-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">أجهزة التحليل الكيميائي</h3>
+                                    <p class="text-sm text-cool-gray">Biochemistry Analyzer - محلل متعدد المعايير</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="equipment-item p-4 rounded-lg border border-gray-200">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-success-green/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-success-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">أجهزة PCR المتقدمة</h3>
+                                    <p class="text-sm text-cool-gray">Real-time PCR - تقنية تفاعل البلمرة المتسلسل</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Medical Team -->
+                <section class="bg-white rounded-2xl p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">الفريق الطبي</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="doctor-card border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <img src="resources/doctor-consultation.png" alt="Dr. Ahmed Benali" class="w-16 h-16 rounded-full object-cover mr-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">د. أحمد بن علي</h3>
+                                    <p class="text-medical-blue font-medium">طبيب مختبر - أخصائي تحاليل طبية</p>
+                                    <p class="text-sm text-cool-gray">15 سنة خبرة - شهادة دكتوراه من جامعة الجزائر</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="doctor-card border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <img src="resources/lab-technician.png" alt="Dr. Sarah Mohamed" class="w-16 h-16 rounded-full object-cover mr-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">د. سارة محمد</h3>
+                                    <p class="text-medical-blue font-medium">طبيبة مختبر - أخصائية أمراض دم</p>
+                                    <p class="text-sm text-cool-gray">12 سنة خبرة - شهادة دكتوراه من جامعة وهران</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Reviews -->
+                <section class="bg-white rounded-2xl p-6 shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">آراء المرضى</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="review-card rounded-lg p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-medical-blue rounded-full flex items-center justify-center text-white font-semibold mr-3">
+                                    أ
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">أحمد خالد</h4>
+                                    <div class="flex text-yellow-400 text-sm">
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-cool-gray">مختبر محترف جداً، النتائج سريعة ودقيقة. الطاقم طيب والمعدات حديثة. أنصح به بشدة.</p>
+                            <span class="text-sm text-gray-400 mt-2 block">منذ أسبوع واحد</span>
+                        </div>
+                        
+                        <div class="review-card rounded-lg p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-soft-teal rounded-full flex items-center justify-center text-white font-semibold mr-3">
+                                    ف
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">فاطمة الزهراء</h4>
+                                    <div class="flex text-yellow-400 text-sm">
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-300 fill-current" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-cool-gray">خدمة ممتازة، حجزت موعد بسهولة والنتائج كانت جاهزة في نفس اليوم. الأسعار معقولة مقارنة بجودة الخدمة.</p>
+                            <span class="text-sm text-gray-400 mt-2 block">منذ أسبوعين</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Right Column - Booking -->
+            <div class="lg:col-span-1">
+                <div class="booking-calendar sticky top-24 rounded-2xl p-6 shadow-xl">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6">احجز موعدك</h3>
+                    
+                    <!-- Selected Services -->
+                    <div id="selected-services" class="mb-6">
+                        <div class="text-center text-cool-gray py-4">
+                            <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                            </svg>
+                            <p class="text-sm">اختر خدمة للحجز</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Calendar -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">اختر التاريخ</h4>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="grid grid-cols-7 gap-1 text-center text-sm mb-2">
+                                <div class="font-semibold text-gray-500 py-2">ح</div>
+                                <div class="font-semibold text-gray-500 py-2">ن</div>
+                                <div class="font-semibold text-gray-500 py-2">ث</div>
+                                <div class="font-semibold text-gray-500 py-2">ر</div>
+                                <div class="font-semibold text-gray-500 py-2">خ</div>
+                                <div class="font-semibold text-gray-500 py-2">ج</div>
+                                <div class="font-semibold text-gray-500 py-2">س</div>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1" id="calendar-grid">
+                                <!-- Calendar will be generated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Time Slots -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">اختر الوقت</h4>
+                        <div class="grid grid-cols-2 gap-2" id="time-slots">
+                            <div class="time-slot px-3 py-2 text-center border border-gray-300 rounded-lg cursor-pointer" onclick="selectTimeSlot(this, '08:00')">08:00</div>
+                            <div class="time-slot px-3 py-2 text-center border border-gray-300 rounded-lg cursor-pointer" onclick="selectTimeSlot(this, '09:00')">09:00</div>
+                            <div class="time-slot unavailable px-3 py-2 text-center border border-gray-300 rounded-lg cursor-pointer">10:00</div>
+                            <div class="time-slot px-3 py-2 text-center border border-gray-300 rounded-lg cursor-pointer" onclick="selectTimeSlot(this, '11:00')">11:00</div>
+                            <div class="time-slot px-3 py-2 text-center border border-gray-300 rounded-lg cursor-pointer" onclick="selectTimeSlot(this, '14:00')">14:00</div>
+                            <div class="time-slot unavailable px-3 py-2 text-center border border-gray-300 rounded-lg cursor-pointer">15:00</div>
+                            <div class="time-slot px-3 py-2 text-center border border-gray-300 rounded-lg cursor-pointer" onclick="selectTimeSlot(this, '16:00')">16:00</div>
+                            <div class="time-slot px-3 py-2 text-center border border-gray-300 rounded-lg cursor-pointer" onclick="selectTimeSlot(this, '17:00')">17:00</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Booking Button -->
+                    <button id="booking-button" onclick="proceedToBooking()" class="w-full px-6 py-3 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>
+                        أكمل الحجز
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-4 mb-6">
+                    <img src="resources/logo.png" alt="Clinicalab Logo" class="h-12 w-12">
+                    <span class="text-3xl font-bold gradient-text">Clinicalab</span>
+                </div>
+                
+                <p class="text-gray-400 mb-6 max-w-2xl mx-auto">
+                    المنصة الجزائرية الرائدة لربط المرضى بمختبرات التحاليل الطبية الموثوقة. 
+                    شفافية في الأسعار، سهولة في الحجز، وموثوقية في النتائج.
+                </p>
+                
+                <div class="flex justify-center space-x-8 mb-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">من نحن</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">الشروط والأحكام</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">سياسة الخصوصية</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">اتصل بنا</a>
+                </div>
+                
+                <div class="border-t border-gray-800 pt-6">
+                    <p class="text-gray-400">
+                        © 2025 Clinicalab. جميع الحقوق محفوظة. منصة جزائرية للخدمات الطبية.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Lab details page specific JavaScript
+        let selectedServices = [];
+        let selectedDate = null;
+        let selectedTime = null;
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeLabGallery();
+            generateCalendar();
+            updateBookingButton();
+        });
+        
+        // Initialize lab gallery
+        function initializeLabGallery() {
+            new Splide('#lab-gallery', {
+                type: 'loop',
+                perPage: 1,
+                autoplay: true,
+                interval: 4000,
+                pauseOnHover: true,
+                arrows: true,
+                pagination: true
+            }).mount();
+        }
+        
+        // Generate calendar
+        function generateCalendar() {
+            const calendarGrid = document.getElementById('calendar-grid');
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            
+            // Get first day of month and number of days
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // Clear calendar
+            calendarGrid.innerHTML = '';
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                calendarGrid.appendChild(emptyCell);
+            }
+            
+            // Add days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'py-2 text-center cursor-pointer hover:bg-medical-blue hover:text-white rounded transition-all';
+                dayCell.textContent = day;
+                
+                // Disable past dates
+                const cellDate = new Date(currentYear, currentMonth, day);
+                if (cellDate < today) {
+                    dayCell.className += ' text-gray-400 cursor-not-allowed';
+                } else {
+                    dayCell.onclick = () => selectDate(dayCell, day);
+                }
+                
+                calendarGrid.appendChild(dayCell);
+            }
+        }
+        
+        // Select date
+        function selectDate(element, day) {
+            // Remove previous selection
+            document.querySelectorAll('#calendar-grid > div').forEach(cell => {
+                cell.classList.remove('bg-medical-blue', 'text-white');
+            });
+            
+            // Add selection to clicked date
+            element.classList.add('bg-medical-blue', 'text-white');
+            selectedDate = day;
+            updateBookingButton();
+        }
+        
+        // Select time slot
+        function selectTimeSlot(element, time) {
+            if (element.classList.contains('unavailable')) return;
+            
+            // Remove previous selection
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // Add selection to clicked slot
+            element.classList.add('selected');
+            selectedTime = time;
+            updateBookingButton();
+        }
+        
+        // Select service
+        function selectService(serviceType) {
+            const serviceData = {
+                'blood-tests': { name: 'تحاليل الدم', price: 2500 },
+                'hormone-tests': { name: 'الهرمونات', price: 3200 },
+                'specialized-tests': { name: 'فحوصات متخصصة', price: 4500 },
+                'imaging': { name: 'الأشعة', price: 5000 }
+            };
+            
+            const service = serviceData[serviceType];
+            if (!selectedServices.find(s => s.type === serviceType)) {
+                selectedServices.push({
+                    type: serviceType,
+                    name: service.name,
+                    price: service.price
+                });
+                updateSelectedServices();
+            }
+        }
+        
+        // Update selected services display
+        function updateSelectedServices() {
+            const container = document.getElementById('selected-services');
+            
+            if (selectedServices.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-cool-gray py-4">
+                        <svg class="w-12 h-12 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        </svg>
+                        <p class="text-sm">اختر خدمة للحجز</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const totalPrice = selectedServices.reduce((sum, service) => sum + service.price, 0);
+            
+            container.innerHTML = `
+                <div class="space-y-3">
+                    ${selectedServices.map(service => `
+                        <div class="flex justify-between items-center bg-gray-50 rounded-lg p-3">
+                            <span class="text-sm font-medium">${service.name}</span>
+                            <div class="flex items-center">
+                                <span class="text-sm font-semibold text-medical-blue mr-2">${service.price.toLocaleString()} دج</span>
+                                <button onclick="removeService('${service.type}')" class="text-red-500 hover:text-red-700">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                    <div class="border-t pt-3">
+                        <div class="flex justify-between items-center font-semibold">
+                            <span>المجموع</span>
+                            <span class="text-medical-blue">${totalPrice.toLocaleString()} دج</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Remove service
+        function removeService(serviceType) {
+            selectedServices = selectedServices.filter(s => s.type !== serviceType);
+            updateSelectedServices();
+            updateBookingButton();
+        }
+        
+        // Update booking button state
+        function updateBookingButton() {
+            const button = document.getElementById('booking-button');
+            const canBook = selectedServices.length > 0 && selectedDate && selectedTime;
+            
+            button.disabled = !canBook;
+            if (canBook) {
+                button.textContent = 'أكمل الحجز';
+            } else if (selectedServices.length === 0) {
+                button.textContent = 'اختر خدمة أولاً';
+            } else if (!selectedDate) {
+                button.textContent = 'اختر التاريخ';
+            } else if (!selectedTime) {
+                button.textContent = 'اختر الوقت';
+            }
+        }
+        
+        // Proceed to booking
+        function proceedToBooking() {
+            if (selectedServices.length === 0 || !selectedDate || !selectedTime) {
+                showNotification('الرجاء اختيار الخدمة والتاريخ والوقت', 'error');
+                return;
+            }
+            
+            const bookingData = {
+                lab: 'lab1',
+                labName: 'مختبر الصحة الدقيقة',
+                services: selectedServices,
+                date: selectedDate,
+                time: selectedTime,
+                totalPrice: selectedServices.reduce((sum, service) => sum + service.price, 0)
+            };
+            
+            // Store booking data
+            localStorage.setItem('bookingData', JSON.stringify(bookingData));
+            
+            // Redirect to booking page
+            window.location.href = 'booking.html';
+        }
+        
+        // Utility functions
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 ${
+                type === 'success' ? 'bg-success-green text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                'bg-medical-blue text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Book lab function
+        function bookLab(labId) {
+            if (selectedServices.length === 0) {
+                showNotification('الرجاء اختيار خدمة قبل الحجز', 'error');
+                return;
+            }
+            proceedToBooking();
+        }
+        
+        // Add to comparison
+        function addToComparison(labId) {
+            let comparisonList = JSON.parse(localStorage.getItem('comparisonList') || '[]');
+            
+            if (comparisonList.includes(labId)) {
+                showNotification('المختبر already in comparison list', 'info');
+                return;
+            }
+            
+            if (comparisonList.length >= 3) {
+                showNotification('يمكنك مقارنة 3 مختبرات كحد أقصى', 'error');
+                return;
+            }
+            
+            comparisonList.push(labId);
+            localStorage.setItem('comparisonList', JSON.stringify(comparisonList));
+            showNotification('تمت إضافة المختبر إلى قائمة المقارنة', 'success');
+        }
+        
+        // View lab details (current page)
+        function viewLabDetails(labId) {
+            // Already on lab details page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+    <script src="main.js"></script>
+</body>
+</html>

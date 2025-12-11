@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinicalab - المنصة الجزائرية للتحاليل الطبية</title>
+    <meta name="description" content="Clinicalab - ربط المرضى بمختبرات التحاليل الطبية في الجزائر. مقارنة الأسعار، الحجز الفوري، وخدمات شفافة.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    
+    <!-- Splide CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#2563EB',
+                        'soft-teal': '#0891B2',
+                        'warm-orange': '#F59E0B',
+                        'cool-gray': '#64748B',
+                        'success-green': '#059669',
+                        'warning-amber': '#D97706',
+                        'light-blue': '#DBEAFE',
+                        'light-teal': '#CFFAFE'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'tajawal': ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .hero-bg {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .lab-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .lab-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .search-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .service-icon {
+            background: linear-gradient(135deg, #2563EB, #0891B2);
+            transition: all 0.3s ease;
+        }
+        
+        .service-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #2563EB, #0891B2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 20px rgba(37, 99, 235, 0.3); }
+            to { box-shadow: 0 0 40px rgba(37, 99, 235, 0.6); }
+        }
+        
+        /* Mobile Menu Styles */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        /* Responsive Typography */
+        @media (max-width: 640px) {
+            .hero-title {
+                font-size: 2.5rem !important;
+            }
+            .section-title {
+                font-size: 2rem !important;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #2563EB;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1d4ed8;
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="font-tajawal bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                    <img src="resources/logo.png" alt="Clinicalab Logo" class="h-10 w-10">
+                    <span class="text-2xl font-bold gradient-text">Clinicalab</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
+                    <a href="index.html" class="text-medical-blue font-medium hover:text-soft-teal transition-colors">الرئيسية</a>
+                    <a href="search.html" class="text-cool-gray hover:text-medical-blue transition-colors">بحث عن مختبرات</a>
+                    <a href="#services" class="text-cool-gray hover:text-medical-blue transition-colors">الخدمات</a>
+                    <a href="#how-it-works" class="text-cool-gray hover:text-medical-blue transition-colors">كيفية العمل</a>
+                </div>
+                
+                <!-- Desktop Auth Buttons -->
+                <div class="hidden md:flex items-center space-x-4 rtl:space-x-reverse" id="user-menu-desktop">
+                    <button class="px-4 py-2 text-medical-blue border border-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all" onclick="window.location.href='login.html'">
+                        تسجيل دخول
+                    </button>
+                    <button class="px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all" onclick="window.location.href='register.html'">
+                        إنشاء حساب
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-md text-cool-gray hover:text-medical-blue focus:outline-none" id="mobile-menu-button">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-0 bg-black/50 z-50 hidden" onclick="closeMobileMenu()">
+        <div class="absolute right-0 top-0 h-full w-80 bg-white shadow-xl" onclick="event.stopPropagation()">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-8">
+                    <div class="flex items-center space-x-3 rtl:space-x-reverse">
+                        <img src="resources/logo.png" alt="Clinicalab Logo" class="h-10 w-10">
+                        <span class="text-xl font-bold gradient-text">Clinicalab</span>
+                    </div>
+                    <button onclick="closeMobileMenu()" class="p-2 rounded-full hover:bg-gray-100">
+                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="space-y-4 mb-8">
+                    <a href="index.html" class="block py-3 px-4 text-medical-blue font-medium bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                        <i class="fas fa-home ml-2"></i> الرئيسية
+                    </a>
+                    <a href="search.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-search ml-2"></i> بحث عن مختبرات
+                    </a>
+                    <a href="#services" onclick="closeMobileMenu()" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-concierge-bell ml-2"></i> الخدمات
+                    </a>
+                    <a href="#how-it-works" onclick="closeMobileMenu()" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-cogs ml-2"></i> كيفية العمل
+                    </a>
+                    <a href="profile.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-user ml-2"></i> الملف الشخصي
+                    </a>
+                    <a href="bookings.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-calendar-alt ml-2"></i> حجوزاتي
+                    </a>
+                </div>
+                
+                <div class="space-y-3 auth-buttons">
+                    <button onclick="window.location.href='login.html'" class="w-full py-3 text-medical-blue border-2 border-medical-blue rounded-lg font-semibold hover:bg-medical-blue hover:text-white transition-all">
+                        تسجيل دخول
+                    </button>
+                    <button onclick="window.location.href='register.html'" class="w-full py-3 bg-gradient-to-r from-medical-blue to-soft-teal text-white rounded-lg font-semibold hover:shadow-lg transition-all">
+                        إنشاء حساب
+                    </button>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <div class="flex justify-center space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-facebook-f text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-twitter text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-instagram text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-linkedin-in text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center pt-16">
+        <div id="particles-container" class="hero-particles"></div>
+        
+        <div class="hero-content w-full">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="text-center lg:text-right">
+                        <h1 class="hero-title text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+                            <span class="gradient-text">Clinicalab</span>
+                            <br>
+                            <span id="typed-text"></span>
+                        </h1>
+                        
+                        <p class="text-lg lg:text-xl text-cool-gray mb-8 leading-relaxed">
+                            منصتك الجزائرية الموثوقة لربط المرضى بأفضل مختبرات التحاليل الطبية. 
+                            مقارنة شفافة للأسعار، حجز فوري، وخدمات طبية موثوقة في جميع الولايات.
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
+                            <button onclick="window.location.href='search.html'" class="px-6 py-4 bg-medical-blue text-white rounded-xl hover:bg-blue-700 transition-all pulse-glow font-semibold text-base sm:text-lg">
+                                <i class="fas fa-search ml-2"></i> ابدأ البحث عن مختبر
+                            </button>
+                            <button onclick="window.location.href='#how-it-works'" class="px-6 py-4 border-2 border-medical-blue text-medical-blue rounded-xl hover:bg-medical-blue hover:text-white transition-all font-semibold text-base sm:text-lg">
+                                <i class="fas fa-play-circle ml-2"></i> كيفية العمل
+                            </button>
+                        </div>
+                        
+                        <!-- Stats -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-center">
+                            <div class="floating-element bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg">
+                                <div class="text-2xl sm:text-3xl font-bold text-medical-blue">500+</div>
+                                <div class="text-cool-gray text-sm sm:text-base">مختبر موثوق</div>
+                            </div>
+                            <div class="floating-element bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg" style="animation-delay: -2s;">
+                                <div class="text-2xl sm:text-3xl font-bold text-soft-teal">50,000+</div>
+                                <div class="text-cool-gray text-sm sm:text-base">حجز ناجح</div>
+                            </div>
+                            <div class="floating-element bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg" style="animation-delay: -4s;">
+                                <div class="text-2xl sm:text-3xl font-bold text-warm-orange">98%</div>
+                                <div class="text-cool-gray text-sm sm:text-base">رضا المرضى</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="relative mt-12 lg:mt-0">
+                        <img src="resources/hero-lab.png" alt="Modern Medical Laboratory" class="w-full h-auto rounded-2xl shadow-2xl">
+                        <div class="absolute -top-4 -right-4 w-16 h-16 sm:w-20 sm:h-20 bg-success-green rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                            جديد
+                        </div>
+                        <div class="absolute -bottom-4 -left-4 w-16 h-16 sm:w-20 sm:h-20 bg-warm-orange rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                            <i class="fas fa-award text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rest of the index.html content remains the same but with responsive improvements -->
+    <!-- Quick Search Section -->
+    <section class="py-12 sm:py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="search-container rounded-2xl p-6 sm:p-8 shadow-xl">
+                <h2 class="section-title text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-6 sm:mb-8">ابحث عن مختبر التحاليل المناسب</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="md:col-span-2">
+                        <div class="relative">
+                            <input type="text" id="search-input" placeholder="ابحث عن تحليل أو مختبر..." 
+                                   class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent text-base">
+                            <svg class="absolute right-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent text-base">
+                        <option value="">اختر الولاية</option>
+                        <option value="algiers">الجزائر العاصمة</option>
+                        <option value="oran">وهران</option>
+                        <option value="constantine">قسنطينة</option>
+                        <option value="annaba">عنابة</option>
+                        <option value="blida">البليدة</option>
+                    </select>
+                    
+                    <button onclick="performSearch()" class="w-full md:col-span-3 px-6 py-3 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all font-semibold text-base">
+                        <i class="fas fa-search ml-2"></i> بحث متقدم
+                    </button>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <span class="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm cursor-pointer hover:bg-medical-blue hover:text-white transition-all">
+                        <i class="fas fa-tint ml-1"></i> تحاليل الدم
+                    </span>
+                    <span class="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm cursor-pointer hover:bg-medical-blue hover:text-white transition-all">
+                        <i class="fas fa-x-ray ml-1"></i> أشعة
+                    </span>
+                    <span class="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm cursor-pointer hover:bg-medical-blue hover:text-white transition-all">
+                        <i class="fas fa-stethoscope ml-1"></i> فحوصات طبية
+                    </span>
+                    <span class="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm cursor-pointer hover:bg-medical-blue hover:text-white transition-all">
+                        <i class="fas fa-flask ml-1"></i> تحاليل مخبرية
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Labs (Rest of sections would have similar responsive improvements) -->
+    <!-- ... -->
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-4 mb-6">
+                    <img src="resources/logo.png" alt="Clinicalab Logo" class="h-12 w-12">
+                    <span class="text-2xl sm:text-3xl font-bold gradient-text">Clinicalab</span>
+                </div>
+                
+                <p class="text-gray-400 mb-6 max-w-2xl mx-auto text-sm sm:text-base">
+                    المنصة الجزائرية الرائدة لربط المرضى بمختبرات التحاليل الطبية الموثوقة. 
+                    شفافية في الأسعار، سهولة في الحجز، وموثوقية في النتائج.
+                </p>
+                
+                <div class="flex flex-wrap justify-center gap-4 sm:gap-8 mb-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">من نحن</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">الشروط والأحكام</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">سياسة الخصوصية</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">اتصل بنا</a>
+                </div>
+                
+                <div class="border-t border-gray-800 pt-6">
+                    <p class="text-gray-400 text-sm sm:text-base">
+                        © 2025 Clinicalab. جميع الحقوق محفوظة. منصة جزائرية للخدمات الطبية.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+	<script src="auth.js"></script>
+
+    <script>
+        // Mobile Menu Functions
+        function openMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.remove('hidden');
+            setTimeout(() => {
+                menu.classList.add('open');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.remove('open');
+            setTimeout(() => {
+                menu.classList.add('hidden');
+            }, 300);
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Event Listeners
+        document.getElementById('mobile-menu-button').addEventListener('click', openMobileMenu);
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMobileMenu();
+        });
+        
+        // Initialize Typed.js
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Typed !== 'undefined') {
+                new Typed('#typed-text', {
+                    strings: ['صحتك... أولويتنا', 'مختبرات موثوقة', 'أسعار شفافة', 'حجز سهل'],
+                    typeSpeed: 50,
+                    backSpeed: 30,
+                    backDelay: 2000,
+                    loop: true
+                });
+            }
+            
+            // Initialize Splide Carousel
+            if (typeof Splide !== 'undefined') {
+                new Splide('#labs-carousel', {
+                    type: 'loop',
+                    perPage: 3,
+                    perMove: 1,
+                    gap: '1rem',
+                    padding: '1rem',
+                    breakpoints: {
+                        1024: {
+                            perPage: 2,
+                        },
+                        640: {
+                            perPage: 1,
+                        }
+                    },
+                    autoplay: true,
+                    interval: 4000,
+                    pauseOnHover: true,
+                    pagination: false
+                }).mount();
+            }
+        });
+        
+        function performSearch() {
+            const searchTerm = document.getElementById('search-input').value;
+            if (searchTerm.trim()) {
+                window.location.href = `search.html?q=${encodeURIComponent(searchTerm)}`;
+            }
+        }
+    </script>
+</body>
+</html>

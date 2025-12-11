@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي - Clinicalab</title>
+    <meta name="description" content="إدارة حسابك، حجوزاتك، وسجلك الطبي على منصة Clinicalab.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#2563EB',
+                        'soft-teal': '#0891B2',
+                        'warm-orange': '#F59E0B',
+                        'cool-gray': '#64748B',
+                        'success-green': '#059669',
+                        'warning-amber': '#D97706'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'tajawal': ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #2563EB, #0891B2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .profile-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            backdrop-filter: blur(10px);
+        }
+        
+        .booking-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .booking-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        
+        .tab-button {
+            transition: all 0.2s ease;
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(135deg, #2563EB, #0891B2);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .stats-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        
+        .reminder-item {
+            transition: all 0.3s ease;
+        }
+        
+        .reminder-item:hover {
+            background: #f8fafc;
+            transform: translateX(4px);
+        }
+        
+        .health-record {
+            transition: all 0.3s ease;
+        }
+        
+        .health-record:hover {
+            background: #f0f7ff;
+            border-color: #2563EB;
+        }
+        
+        .edit-field {
+            transition: all 0.3s ease;
+        }
+        
+        .edit-field:focus {
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .save-indicator {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .avatar-upload {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .avatar-upload:hover {
+            transform: scale(1.05);
+        }
+        
+        .data-saving {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .validation-error {
+            border-color: #EF4444 !important;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+    </style>
+</head>
+<body class="font-tajawal bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
+                        <div class="w-10 h-10 bg-gradient-to-r from-medical-blue to-soft-teal rounded-lg flex items-center justify-center">
+                            <i class="fas fa-flask text-white text-lg"></i>
+                        </div>
+                        <span class="text-2xl font-bold gradient-text">Clinicalab</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-cool-gray hover:text-medical-blue transition-colors">الرئيسية</a>
+                    <a href="search.html" class="text-cool-gray hover:text-medical-blue transition-colors">بحث عن مختبرات</a>
+                    <a href="profile.html" class="text-medical-blue font-medium hover:text-soft-teal transition-colors">الملف الشخصي</a>
+                    <a href="bookings.html" class="text-cool-gray hover:text-medical-blue transition-colors">حجوزاتي</a>
+                </div>
+                
+                <div class="flex items-center space-x-4" id="auth-button">
+                    <!-- سيتم تعبئة هذا القسم بـ JavaScript -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <section class="pt-20 pb-8 bg-gradient-to-r from-medical-blue to-soft-teal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="profile-card rounded-2xl p-8 shadow-xl">
+                <div class="flex flex-col lg:flex-row items-center gap-8">
+                    <!-- Avatar Section -->
+                    <div class="flex items-center gap-6">
+                        <div class="relative group">
+                            <div id="profile-avatar" class="w-24 h-24 bg-medical-blue rounded-full flex items-center justify-center text-white text-3xl font-bold relative">
+                                <!-- سيتم تعبئة الحرف الأول من الاسم -->
+                            </div>
+                            <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer avatar-upload" onclick="changeAvatar()">
+                                <i class="fas fa-camera text-white text-xl"></i>
+                            </div>
+                            <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="uploadAvatar(event)">
+                        </div>
+                        <div>
+                            <h1 id="profile-name" class="text-3xl font-bold text-gray-900">جاري التحميل...</h1>
+                            <p id="profile-email" class="text-cool-gray text-lg">جاري التحميل...</p>
+                            <p id="profile-patient-id" class="text-cool-gray">رقم المريض: <span class="font-semibold text-medical-blue">جاري التحميل...</span></p>
+                            <button onclick="editProfileInfo()" class="mt-2 text-sm text-medical-blue hover:underline flex items-center">
+                                <i class="fas fa-edit ml-1"></i> تعديل المعلومات الأساسية
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Section -->
+                    <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="stats-card rounded-lg p-4 text-center">
+                            <div id="active-bookings" class="text-2xl font-bold text-medical-blue">0</div>
+                            <div class="text-sm text-cool-gray">حجوزات نشطة</div>
+                        </div>
+                        <div class="stats-card rounded-lg p-4 text-center">
+                            <div id="completed-bookings" class="text-2xl font-bold text-success-green">0</div>
+                            <div class="text-sm text-cool-gray">حجوزات سابقة</div>
+                        </div>
+                        <div class="stats-card rounded-lg p-4 text-center">
+                            <div id="reminders-count" class="text-2xl font-bold text-warm-orange">0</div>
+                            <div class="text-sm text-cool-gray">تذكيرات</div>
+                        </div>
+                        <div class="stats-card rounded-lg p-4 text-center">
+                            <div id="medical-records" class="text-2xl font-bold text-soft-teal">0</div>
+                            <div class="text-sm text-cool-gray">سجلات طبية</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Auto-save indicator -->
+                <div id="save-indicator" class="mt-4 hidden">
+                    <div class="flex items-center justify-center text-sm text-success-green">
+                        <i class="fas fa-save ml-2"></i>
+                        <span class="save-indicator">جاري حفظ التغييرات...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid lg:grid-cols-4 gap-8">
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl p-6 shadow-lg sticky top-24">
+                    <h3 class="text-lg font-bold text-gray-900 mb-6">القائمة الرئيسية</h3>
+                    
+                    <div class="space-y-2">
+                        <button onclick="switchTab('bookings')" class="tab-button active w-full text-right px-4 py-3 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar-check ml-3 text-medical-blue"></i>
+                                حجوزاتي
+                            </div>
+                        </button>
+                        
+                        <button onclick="switchTab('reminders')" class="tab-button w-full text-right px-4 py-3 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="flex items-center">
+                                <i class="fas fa-bell ml-3 text-warm-orange"></i>
+                                التذكيرات
+                            </div>
+                        </button>
+                        
+                        <button onclick="switchTab('records')" class="tab-button w-full text-right px-4 py-3 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="flex items-center">
+                                <i class="fas fa-file-medical ml-3 text-success-green"></i>
+                                السجلات الطبية
+                            </div>
+                        </button>
+                        
+                        <button onclick="switchTab('family')" class="tab-button w-full text-right px-4 py-3 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="flex items-center">
+                                <i class="fas fa-users ml-3 text-soft-teal"></i>
+                                أفراد العائلة
+                            </div>
+                        </button>
+                        
+                        <button onclick="switchTab('settings')" class="tab-button w-full text-right px-4 py-3 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="flex items-center">
+                                <i class="fas fa-cog ml-3 text-cool-gray"></i>
+                                الإعدادات
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="mt-8 pt-6 border-t border-gray-200">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-3">إجراءات سريعة</h4>
+                        <div class="space-y-2">
+                            <button onclick="window.location.href='search.html'" class="w-full text-right px-3 py-2 text-sm bg-blue-50 text-medical-blue rounded-lg hover:bg-blue-100 transition-all flex items-center justify-between">
+                                <span>حجز جديد</span>
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button onclick="downloadMedicalHistory()" class="w-full text-right px-3 py-2 text-sm bg-green-50 text-success-green rounded-lg hover:bg-green-100 transition-all flex items-center justify-between">
+                                <span>تحميل السجل الطبي</span>
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="lg:col-span-3">
+                <!-- Bookings Tab -->
+                <div id="bookings-tab" class="tab-content">
+                    <!-- محتوى حجوزاتي (مبسط للمثال) -->
+                    <div class="bg-white rounded-2xl p-6 shadow-lg">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">حجوزاتي</h2>
+                        <div id="bookings-list">
+                            <!-- سيتم تعبئة الحجوزات بـ JavaScript -->
+                            <div class="text-center py-12 text-cool-gray">
+                                <i class="fas fa-calendar-alt text-4xl mb-4"></i>
+                                <p>لا توجد حجوزات حالية</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="tab-content hidden">
+                    <div class="space-y-6">
+                        <!-- Profile Settings Form -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg">
+                            <h3 class="text-xl font-bold text-gray-900 mb-6">معلومات الحساب</h3>
+                            
+                            <form id="profile-form" class="space-y-6">
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <!-- Full Name -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-user ml-2 text-medical-blue"></i>
+                                            الاسم الكامل
+                                        </label>
+                                        <input type="text" id="input-fullname" 
+                                               class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                               placeholder="أحمد محمد">
+                                        <div id="fullname-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                                    </div>
+                                    
+                                    <!-- Email -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-envelope ml-2 text-medical-blue"></i>
+                                            البريد الإلكتروني
+                                        </label>
+                                        <input type="email" id="input-email" 
+                                               class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                               placeholder="example@clinicalab.dz">
+                                        <div id="email-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                                    </div>
+                                    
+                                    <!-- Phone -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-phone ml-2 text-medical-blue"></i>
+                                            رقم الهاتف
+                                        </label>
+                                        <input type="tel" id="input-phone" 
+                                               class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                               placeholder="05 XX XX XX XX">
+                                        <div id="phone-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                                    </div>
+                                    
+                                    <!-- Date of Birth -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-birthday-cake ml-2 text-medical-blue"></i>
+                                            تاريخ الميلاد
+                                        </label>
+                                        <input type="date" id="input-birthdate" 
+                                               class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                                    </div>
+                                    
+                                    <!-- Gender -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-venus-mars ml-2 text-medical-blue"></i>
+                                            الجنس
+                                        </label>
+                                        <select id="input-gender" 
+                                                class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                                            <option value="">اختر الجنس</option>
+                                            <option value="male">ذكر</option>
+                                            <option value="female">أنثى</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Blood Type -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-tint ml-2 text-medical-blue"></i>
+                                            فصيلة الدم
+                                        </label>
+                                        <select id="input-bloodtype" 
+                                                class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                                            <option value="">اختر فصيلة الدم</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- City -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-city ml-2 text-medical-blue"></i>
+                                            المدينة
+                                        </label>
+                                        <select id="input-city" 
+                                                class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                                            <option value="">اختر المدينة</option>
+                                            <option value="algiers">الجزائر العاصمة</option>
+                                            <option value="oran">وهران</option>
+                                            <option value="constantine">قسنطينة</option>
+                                            <option value="annaba">عنابة</option>
+                                            <option value="blida">البليدة</option>
+                                            <option value="batna">باتنة</option>
+                                            <option value="setif">سطيف</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Address -->
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-map-marker-alt ml-2 text-medical-blue"></i>
+                                            العنوان
+                                        </label>
+                                        <input type="text" id="input-address" 
+                                               class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                               placeholder="العنوان الكامل">
+                                    </div>
+                                    
+                                    <!-- Medical History -->
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-file-medical ml-2 text-medical-blue"></i>
+                                            التاريخ الطبي (اختياري)
+                                        </label>
+                                        <textarea id="input-medical-history" 
+                                                  class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                                  rows="3"
+                                                  placeholder="الأمراض المزمنة، الحساسية، الأدوية المستخدمة..."></textarea>
+                                    </div>
+                                    
+                                    <!-- Emergency Contact -->
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-phone-alt ml-2 text-medical-blue"></i>
+                                            جهة اتصال للطوارئ
+                                        </label>
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <input type="text" id="input-emergency-name" 
+                                                   class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                                   placeholder="اسم جهة الاتصال">
+                                            <input type="tel" id="input-emergency-phone" 
+                                                   class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                                   placeholder="رقم الهاتف">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Save Button -->
+                                <div class="flex justify-end pt-4">
+                                    <button type="button" onclick="resetForm()" 
+                                            class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-all mr-3">
+                                        <i class="fas fa-undo ml-2"></i> إعادة تعيين
+                                    </button>
+                                    <button type="submit" id="save-profile-btn" 
+                                            class="px-8 py-3 bg-gradient-to-r from-medical-blue to-soft-teal text-white rounded-lg font-semibold hover:shadow-lg transition-all flex items-center">
+                                        <i class="fas fa-save ml-2"></i>
+                                        <span id="save-button-text">حفظ التغييرات</span>
+                                        <div id="save-loading" class="hidden mr-2">
+                                            <div class="loading-dots">
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Password Change Form -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg">
+                            <h3 class="text-xl font-bold text-gray-900 mb-6">تغيير كلمة المرور</h3>
+                            
+                            <form id="password-form" class="space-y-6">
+                                <div class="grid md:grid-cols-3 gap-6">
+                                    <!-- Current Password -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-lock ml-2 text-medical-blue"></i>
+                                            كلمة المرور الحالية
+                                        </label>
+                                        <div class="relative">
+                                            <input type="password" id="input-current-password" 
+                                                   class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                                   placeholder="••••••••">
+                                            <button type="button" onclick="togglePassword('input-current-password')" 
+                                                    class="absolute left-3 top-3 text-gray-400 hover:text-medical-blue">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div id="current-password-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                                    </div>
+                                    
+                                    <!-- New Password -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-lock ml-2 text-medical-blue"></i>
+                                            كلمة المرور الجديدة
+                                        </label>
+                                        <div class="relative">
+                                            <input type="password" id="input-new-password" 
+                                                   class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                                   placeholder="••••••••">
+                                            <button type="button" onclick="togglePassword('input-new-password')" 
+                                                    class="absolute left-3 top-3 text-gray-400 hover:text-medical-blue">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div id="new-password-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                                    </div>
+                                    
+                                    <!-- Confirm Password -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            <i class="fas fa-lock ml-2 text-medical-blue"></i>
+                                            تأكيد كلمة المرور
+                                        </label>
+                                        <div class="relative">
+                                            <input type="password" id="input-confirm-password" 
+                                                   class="edit-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+                                                   placeholder="••••••••">
+                                            <button type="button" onclick="togglePassword('input-confirm-password')" 
+                                                    class="absolute left-3 top-3 text-gray-400 hover:text-medical-blue">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div id="confirm-password-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Password Strength -->
+                                <div class="mt-4">
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>قوة كلمة المرور</span>
+                                        <span id="password-strength-text">ضعيفة</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div id="password-strength-bar" class="h-full bg-red-500 w-1/4 transition-all duration-300"></div>
+                                    </div>
+                                    <ul class="password-rules text-xs text-gray-600 mt-2 space-y-1">
+                                        <li id="rule-length">8 أحرف على الأقل</li>
+                                        <li id="rule-uppercase">حرف كبير واحد على الأقل</li>
+                                        <li id="rule-number">رقم واحد على الأقل</li>
+                                        <li id="rule-special">رمز خاص واحد على الأقل</li>
+                                    </ul>
+                                </div>
+                                
+                                <!-- Save Password Button -->
+                                <div class="flex justify-end pt-4">
+                                    <button type="submit" id="save-password-btn" 
+                                            class="px-8 py-3 bg-gradient-to-r from-success-green to-emerald-600 text-white rounded-lg font-semibold hover:shadow-lg transition-all flex items-center">
+                                        <i class="fas fa-key ml-2"></i>
+                                        <span id="password-button-text">تغيير كلمة المرور</span>
+                                        <div id="password-loading" class="hidden mr-2">
+                                            <div class="loading-dots">
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Notification Settings -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg">
+                            <h3 class="text-xl font-bold text-gray-900 mb-6">إعدادات الإشعارات</h3>
+                            
+                            <div class="space-y-4">
+                                <!-- Booking Reminders -->
+                                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">
+                                            <i class="fas fa-calendar-alt ml-2 text-medical-blue"></i>
+                                            تذكيرات المواعيد
+                                        </h4>
+                                        <p class="text-sm text-cool-gray mt-1">إشعارات قبل المواعيد المجدولة</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="notify-bookings" checked 
+                                               class="sr-only peer" onchange="saveNotificationSettings()">
+                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-medical-blue"></div>
+                                    </label>
+                                </div>
+                                
+                                <!-- Results Notifications -->
+                                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">
+                                            <i class="fas fa-flask ml-2 text-success-green"></i>
+                                            نتائج التحاليل
+                                        </h4>
+                                        <p class="text-sm text-cool-gray mt-1">إشعارات عند توافر النتائج</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="notify-results" checked 
+                                               class="sr-only peer" onchange="saveNotificationSettings()">
+                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-success-green"></div>
+                                    </label>
+                                </div>
+                                
+                                <!-- Promotions -->
+                                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">
+                                            <i class="fas fa-tag ml-2 text-warm-orange"></i>
+                                            العروض والتخفيضات
+                                        </h4>
+                                        <p class="text-sm text-cool-gray mt-1">إشعارات بالعروض الخاصة</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="notify-promotions" 
+                                               class="sr-only peer" onchange="saveNotificationSettings()">
+                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-warm-orange"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Dangerous Zone -->
+                        <div class="bg-white rounded-2xl p-6 shadow-lg border border-red-200">
+                            <h3 class="text-xl font-bold text-red-700 mb-4">
+                                <i class="fas fa-exclamation-triangle ml-2"></i>
+                                منطقة حساسة
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <button onclick="exportUserData()" 
+                                        class="w-full text-right px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-download ml-2 text-medical-blue"></i>
+                                        <div>
+                                            <h4 class="font-medium text-gray-900">تصدير بياناتي</h4>
+                                            <p class="text-sm text-cool-gray">تحميل جميع بياناتك الشخصية والطبية</p>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-chevron-left text-gray-400"></i>
+                                </button>
+                                
+                                <button onclick="deleteAccount()" 
+                                        class="w-full text-right px-4 py-3 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-all flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-trash-alt ml-2"></i>
+                                        <div>
+                                            <h4 class="font-medium">حذف الحساب</h4>
+                                            <p class="text-sm text-red-500">هذا الإجراء لا يمكن التراجع عنه</p>
+                                        </div>
+                                    </div>
+                                    <i class="fas fa-chevron-left text-red-400"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Other Tabs (مبسطة للمثال) -->
+                <div id="reminders-tab" class="tab-content hidden">
+                    <!-- محتوى التذكيرات -->
+                    <div class="bg-white rounded-2xl p-6 shadow-lg">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">التذكيرات</h2>
+                        <div class="text-center py-12 text-cool-gray">
+                            <i class="fas fa-bell text-4xl mb-4"></i>
+                            <p>لا توجد تذكيرات حالية</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="records-tab" class="tab-content hidden">
+                    <!-- محتوى السجلات الطبية -->
+                    <div class="bg-white rounded-2xl p-6 shadow-lg">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">السجلات الطبية</h2>
+                        <div class="text-center py-12 text-cool-gray">
+                            <i class="fas fa-file-medical text-4xl mb-4"></i>
+                            <p>لا توجد سجلات طبية حالية</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="family-tab" class="tab-content hidden">
+                    <!-- محتوى أفراد العائلة -->
+                    <div class="bg-white rounded-2xl p-6 shadow-lg">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">أفراد العائلة</h2>
+                        <div class="text-center py-12 text-cool-gray">
+                            <i class="fas fa-users text-4xl mb-4"></i>
+                            <p>لم تقم بإضافة أفراد العائلة بعد</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-4 mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-medical-blue to-soft-teal rounded-lg flex items-center justify-center">
+                        <i class="fas fa-flask text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold gradient-text">Clinicalab</span>
+                </div>
+                
+                <p class="text-gray-400 mb-6 max-w-2xl mx-auto">
+                    المنصة الجزائرية الرائدة لربط المرضى بمختبرات التحاليل الطبية الموثوقة. 
+                    شفافية في الأسعار، سهولة في الحجز، وموثوقية في النتائج.
+                </p>
+                
+                <div class="flex justify-center space-x-8 mb-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">من نحن</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">الشروط والأحكام</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">سياسة الخصوصية</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">اتصل بنا</a>
+                </div>
+                
+                <div class="border-t border-gray-800 pt-6">
+                    <p class="text-gray-400">
+                        © 2025 Clinicalab. جميع الحقوق محفوظة. منصة جزائرية للخدمات الطبية.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Code -->
+    <script>
+        // نظام بيانات المستخدم الديناميكي
+        const UserProfileSystem = {
+            // تحميل بيانات المستخدم
+            loadUserData() {
+                // في تطبيق حقيقي، هذا سيكون API call
+                const userData = JSON.parse(localStorage.getItem('clinicalab_user')) || this.getDefaultUser();
+                return userData;
+            },
+
+            // بيانات افتراضية للمستخدم
+            getDefaultUser() {
+                return {
+                    id: 'USER_' + Date.now(),
+                    fullName: 'أحمد خالد',
+                    email: 'ahmed.khaled@clinicalab.dz',
+                    phone: '05 12 34 56 78',
+                    birthdate: '1990-05-15',
+                    gender: 'male',
+                    bloodType: 'A+',
+                    city: 'algiers',
+                    address: 'شارع الاستقلال، الجزائر العاصمة',
+                    medicalHistory: 'لا توجد أمراض مزمنة',
+                    emergencyContact: {
+                        name: 'فاطمة خالد',
+                        phone: '05 98 76 54 32'
+                    },
+                    patientId: '#PT' + Math.floor(Math.random() * 1000000),
+                    createdAt: new Date().toISOString(),
+                    notifications: {
+                        bookings: true,
+                        results: true,
+                        promotions: false
+                    },
+                    stats: {
+                        activeBookings: 2,
+                        completedBookings: 5,
+                        reminders: 3,
+                        medicalRecords: 4
+                    }
+                };
+            },
+
+            // حفظ بيانات المستخدم
+            saveUserData(userData) {
+                // في تطبيق حقيقي، هذا سيكون API call
+                localStorage.setItem('clinicalab_user', JSON.stringify(userData));
+                
+                // تحديث جميع الجلسات المفتوحة
+                if (typeof Event !== 'undefined') {
+                    window.dispatchEvent(new Event('userDataUpdated'));
+                }
+                
+                return true;
+            },
+
+            // تحديث معلومات الملف الشخصي
+            updateProfile(updates) {
+                const userData = this.loadUserData();
+                const updatedData = { ...userData, ...updates };
+                
+                // تحقق من صحة البيانات
+                const validation = this.validateProfileData(updatedData);
+                if (!validation.valid) {
+                    return { success: false, errors: validation.errors };
+                }
+                
+                // حفظ البيانات
+                this.saveUserData(updatedData);
+                return { success: true, data: updatedData };
+            },
+
+            // تحقق من صحة البيانات
+            validateProfileData(data) {
+                const errors = [];
+                
+                if (!data.fullName || data.fullName.trim().length < 2) {
+                    errors.push('الاسم يجب أن يكون على الأقل حرفين');
+                }
+                
+                if (!data.email || !this.isValidEmail(data.email)) {
+                    errors.push('البريد الإلكتروني غير صالح');
+                }
+                
+                if (!data.phone || !this.isValidPhone(data.phone)) {
+                    errors.push('رقم الهاتف غير صالح');
+                }
+                
+                return {
+                    valid: errors.length === 0,
+                    errors: errors
+                };
+            },
+
+            // تحقق من صحة البريد الإلكتروني
+            isValidEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            },
+
+            // تحقق من صحة رقم الهاتف
+            isValidPhone(phone) {
+                const re = /^0[5-7][0-9]{8}$/;
+                return re.test(phone.replace(/\s/g, ''));
+            },
+
+            // تغيير كلمة المرور
+            changePassword(currentPassword, newPassword) {
+                // في تطبيق حقيقي، هذا سيتحقق من كلمة المرور الحالية مع الخادم
+                if (newPassword.length < 8) {
+                    return { success: false, error: 'كلمة المرور يجب أن تكون 8 أحرف على الأقل' };
+                }
+                
+                return { success: true };
+            },
+
+            // تصدير البيانات
+            exportData() {
+                const userData = this.loadUserData();
+                const dataStr = JSON.stringify(userData, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                
+                return dataUri;
+            },
+
+            // حذف الحساب
+            deleteAccount() {
+                localStorage.removeItem('clinicalab_user');
+                return { success: true };
+            }
+        };
+
+        // متغيرات عامة
+        let currentTab = 'settings';
+        let autoSaveTimer = null;
+        let isSaving = false;
+
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            setupEventListeners();
+            loadUserProfile();
+            checkAuthStatus();
+        });
+
+        // تهيئة الصفحة
+        function initializePage() {
+            // تحميل بيانات المستخدم
+            const userData = UserProfileSystem.loadUserData();
+            
+            // تحديث واجهة المستخدم
+            updateProfileUI(userData);
+            updateStatsUI(userData.stats);
+            updateFormFields(userData);
+            updateNotificationSettings(userData.notifications);
+            
+            // إعداد علامة التبويب النشطة
+            switchTab('settings');
+            
+            // إعداد تأثيرات
+            setupAnimations();
+        }
+
+        // تحديث واجهة الملف الشخصي
+        function updateProfileUI(userData) {
+            const avatar = document.getElementById('profile-avatar');
+            const name = document.getElementById('profile-name');
+            const email = document.getElementById('profile-email');
+            const patientId = document.getElementById('profile-patient-id');
+            
+            // الحرف الأول من الاسم
+            const firstChar = userData.fullName.charAt(0);
+            avatar.innerHTML = firstChar;
+            
+            // معلومات المستخدم
+            name.textContent = userData.fullName;
+            email.textContent = userData.email;
+            patientId.innerHTML = `رقم المريض: <span class="font-semibold text-medical-blue">${userData.patientId}</span>`;
+        }
+
+        // تحديث الإحصائيات
+        function updateStatsUI(stats) {
+            document.getElementById('active-bookings').textContent = stats.activeBookings;
+            document.getElementById('completed-bookings').textContent = stats.completedBookings;
+            document.getElementById('reminders-count').textContent = stats.reminders;
+            document.getElementById('medical-records').textContent = stats.medicalRecords;
+        }
+
+        // تحديث حقول النموذج
+        function updateFormFields(userData) {
+            document.getElementById('input-fullname').value = userData.fullName || '';
+            document.getElementById('input-email').value = userData.email || '';
+            document.getElementById('input-phone').value = userData.phone || '';
+            document.getElementById('input-birthdate').value = userData.birthdate || '';
+            document.getElementById('input-gender').value = userData.gender || '';
+            document.getElementById('input-bloodtype').value = userData.bloodType || '';
+            document.getElementById('input-city').value = userData.city || '';
+            document.getElementById('input-address').value = userData.address || '';
+            document.getElementById('input-medical-history').value = userData.medicalHistory || '';
+            document.getElementById('input-emergency-name').value = userData.emergencyContact?.name || '';
+            document.getElementById('input-emergency-phone').value = userData.emergencyContact?.phone || '';
+        }
+
+        // تحديث إعدادات الإشعارات
+        function updateNotificationSettings(notifications) {
+            document.getElementById('notify-bookings').checked = notifications.bookings;
+            document.getElementById('notify-results').checked = notifications.results;
+            document.getElementById('notify-promotions').checked = notifications.promotions;
+        }
+
+        // إعداد مستمعي الأحداث
+        function setupEventListeners() {
+            // حفظ التغييرات التلقائي
+            document.querySelectorAll('.edit-field').forEach(field => {
+                field.addEventListener('input', debounce(saveFieldChange, 1000));
+            });
+            
+            // تحقق من البريد الإلكتروني
+            document.getElementById('input-email').addEventListener('blur', validateEmail);
+            
+            // تحقق من رقم الهاتف
+            document.getElementById('input-phone').addEventListener('blur', validatePhone);
+            
+            // متابعة قوة كلمة المرور
+            document.getElementById('input-new-password').addEventListener('input', checkPasswordStrength);
+            
+            // إرسال نموذج الملف الشخصي
+            document.getElementById('profile-form').addEventListener('submit', saveProfile);
+            
+            // إرسال نموذج كلمة المرور
+            document.getElementById('password-form').addEventListener('submit', changePassword);
+            
+            // حدث تحديث بيانات المستخدم
+            window.addEventListener('userDataUpdated', () => {
+                const userData = UserProfileSystem.loadUserData();
+                updateProfileUI(userData);
+                updateStatsUI(userData.stats);
+                showNotification('تم تحديث بياناتك', 'success');
+            });
+        }
+
+        // تحقق من حالة المصادقة
+        function checkAuthStatus() {
+            // في تطبيق حقيقي، هذا سيتحقق من جلسة المستخدم
+            const userData = UserProfileSystem.loadUserData();
+            if (!userData || !userData.email) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // حفظ التغيير في حقل
+        function saveFieldChange(event) {
+            if (isSaving) return;
+            
+            const fieldId = event.target.id;
+            const value = event.target.value;
+            
+            // تحديد مفتاح البيانات
+            const fieldMap = {
+                'input-fullname': 'fullName',
+                'input-email': 'email',
+                'input-phone': 'phone',
+                'input-birthdate': 'birthdate',
+                'input-gender': 'gender',
+                'input-bloodtype': 'bloodType',
+                'input-city': 'city',
+                'input-address': 'address',
+                'input-medical-history': 'medicalHistory',
+                'input-emergency-name': 'emergencyContact.name',
+                'input-emergency-phone': 'emergencyContact.phone'
+            };
+            
+            const dataKey = fieldMap[fieldId];
+            if (!dataKey) return;
+            
+            // عرض مؤشر الحفظ
+            showSaveIndicator();
+            
+            // تحديث البيانات
+            const userData = UserProfileSystem.loadUserData();
+            let updatedData = { ...userData };
+            
+            if (dataKey.includes('.')) {
+                const keys = dataKey.split('.');
+                if (keys[0] === 'emergencyContact') {
+                    updatedData.emergencyContact = updatedData.emergencyContact || {};
+                    updatedData.emergencyContact[keys[1]] = value;
+                }
+            } else {
+                updatedData[dataKey] = value;
+            }
+            
+            // حفظ التحديث
+            UserProfileSystem.saveUserData(updatedData);
+            
+            // إخفاء مؤشر الحفظ بعد تأخير
+            setTimeout(() => {
+                hideSaveIndicator();
+            }, 1000);
+        }
+
+        // تحقق من البريد الإلكتروني
+        function validateEmail() {
+            const email = document.getElementById('input-email').value;
+            const errorDiv = document.getElementById('email-error');
+            
+            if (email && !UserProfileSystem.isValidEmail(email)) {
+                errorDiv.textContent = 'البريد الإلكتروني غير صالح';
+                errorDiv.classList.remove('hidden');
+                document.getElementById('input-email').classList.add('validation-error');
+                return false;
+            } else {
+                errorDiv.classList.add('hidden');
+                document.getElementById('input-email').classList.remove('validation-error');
+                return true;
+            }
+        }
+
+        // تحقق من رقم الهاتف
+        function validatePhone() {
+            const phone = document.getElementById('input-phone').value;
+            const errorDiv = document.getElementById('phone-error');
+            
+            if (phone && !UserProfileSystem.isValidPhone(phone)) {
+                errorDiv.textContent = 'رقم الهاتف غير صالح (يجب أن يبدأ بـ 05، 06، أو 07)';
+                errorDiv.classList.remove('hidden');
+                document.getElementById('input-phone').classList.add('validation-error');
+                return false;
+            } else {
+                errorDiv.classList.add('hidden');
+                document.getElementById('input-phone').classList.remove('validation-error');
+                return true;
+            }
+        }
+
+        // فحص قوة كلمة المرور
+        function checkPasswordStrength() {
+            const password = document.getElementById('input-new-password').value;
+            const strengthBar = document.getElementById('password-strength-bar');
+            const strengthText = document.getElementById('password-strength-text');
+            const rules = {
+                length: document.getElementById('rule-length'),
+                uppercase: document.getElementById('rule-uppercase'),
+                number: document.getElementById('rule-number'),
+                special: document.getElementById('rule-special')
+            };
+
+            let strength = 0;
+            
+            // التحقق من القواعد
+            if (password.length >= 8) {
+                rules.length.classList.add('valid');
+                strength++;
+            } else {
+                rules.length.classList.remove('valid');
+            }
+            
+            if (/[A-Z]/.test(password)) {
+                rules.uppercase.classList.add('valid');
+                strength++;
+            } else {
+                rules.uppercase.classList.remove('valid');
+            }
+            
+            if (/\d/.test(password)) {
+                rules.number.classList.add('valid');
+                strength++;
+            } else {
+                rules.number.classList.remove('valid');
+            }
+            
+            if (/[^A-Za-z0-9]/.test(password)) {
+                rules.special.classList.add('valid');
+                strength++;
+            } else {
+                rules.special.classList.remove('valid');
+            }
+            
+            // تحديث شريط القوة
+            if (strength <= 1) {
+                strengthBar.className = 'h-full bg-red-500 w-1/4';
+                strengthText.textContent = 'ضعيفة';
+                strengthText.className = 'text-red-500';
+            } else if (strength <= 2) {
+                strengthBar.className = 'h-full bg-yellow-500 w-1/2';
+                strengthText.textContent = 'متوسطة';
+                strengthText.className = 'text-yellow-500';
+            } else if (strength <= 3) {
+                strengthBar.className = 'h-full bg-blue-500 w-3/4';
+                strengthText.textContent = 'جيدة';
+                strengthText.className = 'text-blue-500';
+            } else {
+                strengthBar.className = 'h-full bg-green-500 w-full';
+                strengthText.textContent = 'قوية';
+                strengthText.className = 'text-green-500';
+            }
+        }
+
+        // حفظ الملف الشخصي
+        async function saveProfile(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
+            // عرض حالة التحميل
+            const saveBtn = document.getElementById('save-profile-btn');
+            const saveText = document.getElementById('save-button-text');
+            const loading = document.getElementById('save-loading');
+            
+            saveBtn.disabled = true;
+            saveText.classList.add('hidden');
+            loading.classList.remove('hidden');
+            
+            // جمع البيانات
+            const updates = {
+                fullName: document.getElementById('input-fullname').value,
+                email: document.getElementById('input-email').value,
+                phone: document.getElementById('input-phone').value,
+                birthdate: document.getElementById('input-birthdate').value,
+                gender: document.getElementById('input-gender').value,
+                bloodType: document.getElementById('input-bloodtype').value,
+                city: document.getElementById('input-city').value,
+                address: document.getElementById('input-address').value,
+                medicalHistory: document.getElementById('input-medical-history').value,
+                emergencyContact: {
+                    name: document.getElementById('input-emergency-name').value,
+                    phone: document.getElementById('input-emergency-phone').value
+                }
+            };
+            
+            // محاكاة تأخير الشبكة
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // تحديث البيانات
+            const result = UserProfileSystem.updateProfile(updates);
+            
+            // إعادة تعيين الزر
+            saveBtn.disabled = false;
+            saveText.classList.remove('hidden');
+            loading.classList.add('hidden');
+            
+            // عرض النتيجة
+            if (result.success) {
+                showNotification('تم تحديث الملف الشخصي بنجاح', 'success');
+                updateProfileUI(result.data);
+            } else {
+                showNotification(result.errors.join('<br>'), 'error');
+            }
+        }
+
+        // تغيير كلمة المرور
+        async function changePassword(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('input-current-password').value;
+            const newPassword = document.getElementById('input-new-password').value;
+            const confirmPassword = document.getElementById('input-confirm-password').value;
+            
+            // التحقق من البيانات
+            const errors = [];
+            
+            if (!currentPassword) {
+                errors.push('يرجى إدخال كلمة المرور الحالية');
+                document.getElementById('current-password-error').textContent = 'يرجى إدخال كلمة المرور الحالية';
+                document.getElementById('current-password-error').classList.remove('hidden');
+            }
+            
+            if (!newPassword) {
+                errors.push('يرجى إدخال كلمة المرور الجديدة');
+                document.getElementById('new-password-error').textContent = 'يرجى إدخال كلمة المرور الجديدة';
+                document.getElementById('new-password-error').classList.remove('hidden');
+            }
+            
+            if (newPassword !== confirmPassword) {
+                errors.push('كلمتا المرور غير متطابقتين');
+                document.getElementById('confirm-password-error').textContent = 'كلمتا المرور غير متطابقتين';
+                document.getElementById('confirm-password-error').classList.remove('hidden');
+            }
+            
+            if (errors.length > 0) {
+                return;
+            }
+            
+            // عرض حالة التحميل
+            const saveBtn = document.getElementById('save-password-btn');
+            const saveText = document.getElementById('password-button-text');
+            const loading = document.getElementById('password-loading');
+            
+            saveBtn.disabled = true;
+            saveText.classList.add('hidden');
+            loading.classList.remove('hidden');
+            
+            // محاكاة تأخير الشبكة
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // تغيير كلمة المرور
+            const result = UserProfileSystem.changePassword(currentPassword, newPassword);
+            
+            // إعادة تعيين الزر
+            saveBtn.disabled = false;
+            saveText.classList.remove('hidden');
+            loading.classList.add('hidden');
+            
+            // عرض النتيجة
+            if (result.success) {
+                showNotification('تم تغيير كلمة المرور بنجاح', 'success');
+                document.getElementById('password-form').reset();
+                checkPasswordStrength();
+            } else {
+                showNotification(result.error, 'error');
+            }
+        }
+
+        // تحقق من صحة النموذج
+        function validateForm() {
+            let isValid = true;
+            
+            // تحقق من البريد الإلكتروني
+            if (!validateEmail()) isValid = false;
+            
+            // تحقق من رقم الهاتف
+            if (!validatePhone()) isValid = false;
+            
+            return isValid;
+        }
+
+        // حفظ إعدادات الإشعارات
+        function saveNotificationSettings() {
+            const notifications = {
+                bookings: document.getElementById('notify-bookings').checked,
+                results: document.getElementById('notify-results').checked,
+                promotions: document.getElementById('notify-promotions').checked
+            };
+            
+            const userData = UserProfileSystem.loadUserData();
+            userData.notifications = notifications;
+            UserProfileSystem.saveUserData(userData);
+            
+            showNotification('تم حفظ إعدادات الإشعارات', 'success');
+        }
+
+        // تصدير بيانات المستخدم
+        function exportUserData() {
+            Swal.fire({
+                title: 'تصدير البيانات',
+                text: 'هل تريد تصدير جميع بياناتك الشخصية والطبية؟',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، قم بالتصدير',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#2563EB'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const dataUri = UserProfileSystem.exportData();
+                    const exportFileDefaultName = `clinicalab-data-${new Date().toISOString().split('T')[0]}.json`;
+                    
+                    const linkElement = document.createElement('a');
+                    linkElement.setAttribute('href', dataUri);
+                    linkElement.setAttribute('download', exportFileDefaultName);
+                    linkElement.click();
+                    
+                    showNotification('تم تصدير بياناتك بنجاح', 'success');
+                }
+            });
+        }
+
+        // حذف الحساب
+        function deleteAccount() {
+            Swal.fire({
+                title: 'حذف الحساب',
+                html: `
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                        </div>
+                        <p class="text-gray-700 mb-2"><strong>تنبيه:</strong> هذا الإجراء لا يمكن التراجع عنه</p>
+                        <p class="text-sm text-gray-600">سيتم حذف جميع بياناتك الشخصية والطبية نهائياً</p>
+                    </div>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، احذف حسابي',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#EF4444',
+                backdrop: 'rgba(0,0,0,0.5)'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    UserProfileSystem.deleteAccount();
+                    
+                    Swal.fire({
+                        title: 'تم حذف الحساب',
+                        text: 'تم حذف حسابك بنجاح، جاري التوجيه...',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.href = 'index.html';
+                    });
+                }
+            });
+        }
+
+        // وظائف مساعدة
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // إزالة النشاط من جميع الأزرار
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // إضافة النشاط للزر المختار
+            const activeBtn = Array.from(document.querySelectorAll('.tab-button')).find(btn => 
+                btn.getAttribute('onclick')?.includes(tabName)
+            );
+            if (activeBtn) activeBtn.classList.add('active');
+            
+            // إخفاء جميع المحتويات
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // عرض المحتوى المختار
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+        }
+
+        function showSaveIndicator() {
+            const indicator = document.getElementById('save-indicator');
+            indicator.classList.remove('hidden');
+            indicator.classList.add('data-saving');
+        }
+
+        function hideSaveIndicator() {
+            const indicator = document.getElementById('save-indicator');
+            indicator.classList.add('hidden');
+        }
+
+        function showNotification(message, type = 'info') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: type,
+                title: message,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: type === 'error' ? '#FEF2F2' : 
+                          type === 'success' ? '#F0FDF4' : 
+                          '#EFF6FF',
+                color: type === 'error' ? '#991B1B' : 
+                      type === 'success' ? '#065F46' : 
+                      '#1E40AF',
+                iconColor: type === 'error' ? '#DC2626' : 
+                          type === 'success' ? '#10B981' : 
+                          '#3B82F6'
+            });
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function resetForm() {
+            const userData = UserProfileSystem.loadUserData();
+            updateFormFields(userData);
+            showNotification('تم إعادة تعيين النموذج', 'info');
+        }
+
+        function editProfileInfo() {
+            switchTab('settings');
+            document.getElementById('input-fullname').focus();
+        }
+
+        function changeAvatar() {
+            document.getElementById('avatar-input').click();
+        }
+
+        function uploadAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // في تطبيق حقيقي، هذا سيرفع الصورة للخادم
+                    showNotification('تم رفع الصورة بنجاح', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function downloadMedicalHistory() {
+            showNotification('جاري تحميل السجل الطبي...', 'info');
+        }
+
+        function setupAnimations() {
+            // إضافة تأثيرات للبطاقات
+            anime({
+                targets: '.stats-card',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100),
+                duration: 600,
+                easing: 'easeOutQuad'
+            });
+        }
+
+        // تحميل ملف تعريف المستخدم
+        function loadUserProfile() {
+            // هذا سيتكامل مع نظام المصادقة
+            const userData = UserProfileSystem.loadUserData();
+            return userData;
+        }
+    </script>
+</body>
+</html>

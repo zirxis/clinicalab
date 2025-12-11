@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام الحجز - Clinicalab</title>
+    <meta name="description" content="أكمل حجزك في مختبر الصحة الدقيقة. أدخل معلوماتك واختر طريقة الدفع المناسبة.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#2563EB',
+                        'soft-teal': '#0891B2',
+                        'warm-orange': '#F59E0B',
+                        'cool-gray': '#64748B',
+                        'success-green': '#059669',
+                        'warning-amber': '#D97706'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'tajawal': ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #2563EB, #0891B2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .booking-step {
+            transition: all 0.3s ease;
+        }
+        
+        .booking-step.active {
+            background: linear-gradient(135deg, #2563EB, #0891B2);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .booking-step.completed {
+            background: #059669;
+            color: white;
+        }
+        
+        .form-field {
+            transition: all 0.2s ease;
+        }
+        
+        .form-field:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.1);
+        }
+        
+        .payment-method {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .payment-method:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .payment-method.selected {
+            border-color: #2563EB;
+            background: #f0f7ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #2563EB 0%, #0891B2 100%);
+            transition: width 0.5s ease;
+        }
+        
+        .booking-summary {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .confirmation-animation {
+            animation: bounce 1s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="font-tajawal bg-gray-50">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <img src="resources/logo.png" alt="Clinicalab Logo" class="h-10 w-10">
+                    <span class="text-2xl font-bold gradient-text">Clinicalab</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-cool-gray hover:text-medical-blue transition-colors">الرئيسية</a>
+                    <a href="search.html" class="text-cool-gray hover:text-medical-blue transition-colors">بحث عن مختبرات</a>
+                    <a href="#" class="text-medical-blue font-medium hover:text-soft-teal transition-colors">الحجز</a>
+                    <a href="#services" class="text-cool-gray hover:text-medical-blue transition-colors">الخدمات</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="hidden md:block px-4 py-2 text-medical-blue border border-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all">
+                        تسجيل دخول
+                    </button>
+                    <button class="px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all">
+                        إنشاء حساب
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Progress Header -->
+    <section class="pt-20 pb-8 bg-gradient-to-r from-medical-blue to-soft-teal">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-white mb-8">
+                <h1 class="text-3xl font-bold mb-4">إتمام الحجز</h1>
+                <p class="text-lg opacity-90">أدخل معلوماتك واكمل حجزك في بضع خطوات بسيطة</p>
+            </div>
+            
+            <!-- Progress Steps -->
+            <div class="flex justify-center items-center space-x-8 mb-6">
+                <div class="booking-step active w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg" id="step-1">1</div>
+                <div class="w-16 h-1 bg-white/30"></div>
+                <div class="booking-step w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg bg-white/30 text-white" id="step-2">2</div>
+                <div class="w-16 h-1 bg-white/30"></div>
+                <div class="booking-step w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg bg-white/30 text-white" id="step-3">3</div>
+                <div class="w-16 h-1 bg-white/30"></div>
+                <div class="booking-step w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg bg-white/30 text-white" id="step-4">4</div>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-white/30 rounded-full h-2">
+                <div class="progress-bar h-2 rounded-full" style="width: 25%" id="progress-bar"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Booking Form -->
+            <div class="lg:col-span-2">
+                <!-- Step 1: Personal Information -->
+                <div id="booking-step-1" class="bg-white rounded-2xl p-8 shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">المعلومات الشخصية</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">الاسم الكامل *</label>
+                            <input type="text" id="full-name" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent" placeholder="أدخل اسمك الكامل">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">البريد الإلكتروني *</label>
+                            <input type="email" id="email" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent" placeholder="example@email.com">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف *</label>
+                            <input type="tel" id="phone" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent" placeholder="05 XX XX XX XX">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ الميلاد *</label>
+                            <input type="date" id="birth-date" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">الجنس *</label>
+                            <select id="gender" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent">
+                                <option value="">اختر الجنس</option>
+                                <option value="male">ذكر</option>
+                                <option value="female">أنثى</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">رقم البطاقة الوطنية *</label>
+                            <input type="text" id="national-id" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent" placeholder="XX XXX XXX XXX">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">عنوان السكن</label>
+                        <textarea id="address" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent" rows="3" placeholder="أدخل عنوانك الكامل"></textarea>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">هل تعاني من أي حساسية أو أمراض مزمنة؟</label>
+                        <textarea id="medical-history" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent" rows="3" placeholder="اذكر أي معلومات طبية مهمة"></textarea>
+                    </div>
+                    
+                    <div class="flex justify-end mt-8">
+                        <button onclick="nextStep()" class="px-8 py-3 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all font-semibold">
+                            التالي
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Service Details -->
+                <div id="booking-step-2" class="bg-white rounded-2xl p-8 shadow-lg hidden">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">تفاصيل الخدمة</h2>
+                    
+                    <div id="selected-services-details" class="space-y-4 mb-6">
+                        <!-- Services will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="border-t pt-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">إضافة ملاحظات خاصة</h3>
+                        <textarea id="special-notes" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent" rows="4" placeholder="أي ملاحظات أو طلبات خاصة بخصوص التحاليل المطلوبة"></textarea>
+                    </div>
+                    
+                    <div class="flex justify-between mt-8">
+                        <button onclick="prevStep()" class="px-8 py-3 border border-medical-blue text-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all font-semibold">
+                            السابق
+                        </button>
+                        <button onclick="nextStep()" class="px-8 py-3 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all font-semibold">
+                            التالي
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Payment Method -->
+                <div id="booking-step-3" class="bg-white rounded-2xl p-8 shadow-lg hidden">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">طريقة الدفع</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-4 mb-6">
+                        <div class="payment-method border-2 border-gray-200 rounded-lg p-4" onclick="selectPaymentMethod('card')">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-medical-blue/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-medical-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">بطاقة بنكية</h3>
+                                    <p class="text-sm text-cool-gray">Visa, Mastercard, Algerie Poste</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method border-2 border-gray-200 rounded-lg p-4" onclick="selectPaymentMethod('cash')">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-success-green/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-success-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">دفع نقدي</h3>
+                                    <p class="text-sm text-cool-gray">الدفع عند الوصول</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method border-2 border-gray-200 rounded-lg p-4" onclick="selectPaymentMethod('transfer')">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-warm-orange/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-warm-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">تحويل بنكي</h3>
+                                    <p class="text-sm text-cool-gray">CNEP, BDL, Algerie Poste</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-method border-2 border-gray-200 rounded-lg p-4" onclick="selectPaymentMethod('baridi')">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-soft-teal/10 rounded-lg flex items-center justify-center mr-4">
+                                    <svg class="w-6 h-6 text-soft-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">بريدي موب</h3>
+                                    <p class="text-sm text-cool-gray">الدفع عبر الهاتف</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Details (Card) -->
+                    <div id="card-details" class="hidden">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">معلومات البطاقة</h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">رقم البطاقة</label>
+                                <input type="text" id="card-number" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent" placeholder="1234 5678 9012 3456">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">تاريخ الانتهاء</label>
+                                <input type="text" id="card-expiry" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent" placeholder="MM/YY">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">CVV</label>
+                                <input type="text" id="card-cvv" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent" placeholder="123">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">اسم صاحب البطاقة</label>
+                                <input type="text" id="card-holder" class="form-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-medical-blue focus:border-transparent" placeholder="أدخل اسم صاحب البطاقة">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between mt-8">
+                        <button onclick="prevStep()" class="px-8 py-3 border border-medical-blue text-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all font-semibold">
+                            السابق
+                        </button>
+                        <button onclick="nextStep()" class="px-8 py-3 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all font-semibold">
+                            التالي
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Confirmation -->
+                <div id="booking-step-4" class="bg-white rounded-2xl p-8 shadow-lg hidden">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">تأكيد الحجز</h2>
+                    
+                    <div class="text-center mb-8">
+                        <div class="confirmation-animation w-20 h-20 bg-success-green rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">تم تأكيد الحجز بنجاح!</h3>
+                        <p class="text-cool-gray">سيتم إرسال تفاصيل الحجز إلى بريدك الإلكتروني</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">رقم الحجز: <span class="text-medical-blue">#CL2025-001245</span></h4>
+                        
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-cool-gray">الحالة</span>
+                                <span class="text-success-green font-semibold">مؤكد</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-cool-gray">تاريخ الموعد</span>
+                                <span class="font-semibold" id="appointment-date">15 ديسمبر 2025</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-cool-gray">الوقت</span>
+                                <span class="font-semibold" id="appointment-time">09:00 صباحاً</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-cool-gray">طريقة الدفع</span>
+                                <span class="font-semibold" id="payment-method-display">بطاقة بنكية</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="downloadBookingConfirmation()" class="flex-1 px-6 py-3 border border-medical-blue text-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all font-semibold">
+                            تحميل التأكيد
+                        </button>
+                        <button onclick="goToProfile()" class="flex-1 px-6 py-3 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all font-semibold">
+                            الذهاب إلى الملف الشخصي
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Booking Summary -->
+            <div class="lg:col-span-1">
+                <div class="booking-summary sticky top-24 rounded-2xl p-6 shadow-xl">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6">ملخص الحجز</h3>
+                    
+                    <!-- Lab Info -->
+                    <div class="flex items-center mb-6">
+                        <img src="https://kimi-web-img.moonshot.cn/img/amlcdn.accessmedlab.com/25d9d31373adc1a4f001fb976817db55a6a3e9ab.png" alt="Lab" class="w-16 h-16 rounded-lg object-cover">
+                        <div class="mr-4">
+                            <h4 class="font-semibold text-gray-900" id="lab-name">مختبر الصحة الدقيقة</h4>
+                            <p class="text-sm text-cool-gray">الجزائر العاصمة، حيدرة</p>
+                            <div class="flex text-yellow-400 text-sm mt-1">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Services -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">الخدمات المختارة</h4>
+                        <div id="booking-services" class="space-y-2">
+                            <!-- Services will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Date & Time -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">موعد الحجز</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-cool-gray">التاريخ</span>
+                                <span id="booking-date">15 ديسمبر 2025</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-cool-gray">الوقت</span>
+                                <span id="booking-time">09:00 صباحاً</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Total -->
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-lg font-semibold text-gray-900">المجموع</span>
+                            <span class="text-2xl font-bold text-medical-blue" id="total-price">0 دج</span>
+                        </div>
+                        <p class="text-sm text-cool-gray">السعر شامل الضرائب</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-4 mb-6">
+                    <img src="resources/logo.png" alt="Clinicalab Logo" class="h-12 w-12">
+                    <span class="text-3xl font-bold gradient-text">Clinicalab</span>
+                </div>
+                
+                <p class="text-gray-400 mb-6 max-w-2xl mx-auto">
+                    المنصة الجزائرية الرائدة لربط المرضى بمختبرات التحاليل الطبية الموثوقة. 
+                    شفافية في الأسعار، سهولة في الحجز، وموثوقية في النتائج.
+                </p>
+                
+                <div class="flex justify-center space-x-8 mb-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">من نحن</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">الشروط والأحكام</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">سياسة الخصوصية</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">اتصل بنا</a>
+                </div>
+                
+                <div class="border-t border-gray-800 pt-6">
+                    <p class="text-gray-400">
+                        © 2025 Clinicalab. جميع الحقوق محفوظة. منصة جزائرية للخدمات الطبية.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Booking page JavaScript
+        let currentStep = 1;
+        let selectedPaymentMethod = null;
+        let bookingData = {};
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBookingData();
+            updateBookingSummary();
+            animateStepTransition();
+        });
+        
+        // Load booking data from localStorage
+        function loadBookingData() {
+            const storedData = localStorage.getItem('bookingData');
+            if (storedData) {
+                bookingData = JSON.parse(storedData);
+            } else {
+                // Mock data for demonstration
+                bookingData = {
+                    lab: 'lab1',
+                    labName: 'مختبر الصحة الدقيقة',
+                    services: [
+                        { name: 'تحاليل الدم الشاملة', price: 2500 },
+                        { name: 'فحص الكلى والكبد', price: 1800 }
+                    ],
+                    date: 15,
+                    time: '09:00',
+                    totalPrice: 4300
+                };
+            }
+        }
+        
+        // Update booking summary
+        function updateBookingSummary() {
+            document.getElementById('lab-name').textContent = bookingData.labName;
+            
+            // Update services
+            const servicesContainer = document.getElementById('booking-services');
+            servicesContainer.innerHTML = bookingData.services.map(service => `
+                <div class="flex justify-between text-sm">
+                    <span class="text-cool-gray">${service.name}</span>
+                    <span class="font-semibold">${service.price.toLocaleString()} دج</span>
+                </div>
+            `).join('');
+            
+            // Update date and time
+            const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+            const currentMonth = months[new Date().getMonth()];
+            const currentYear = new Date().getFullYear();
+            
+            document.getElementById('booking-date').textContent = `${bookingData.date} ${currentMonth} ${currentYear}`;
+            document.getElementById('appointment-date').textContent = `${bookingData.date} ${currentMonth} ${currentYear}`;
+            document.getElementById('booking-time').textContent = bookingData.time + ' صباحاً';
+            document.getElementById('appointment-time').textContent = bookingData.time + ' صباحاً';
+            
+            // Update total price
+            document.getElementById('total-price').textContent = bookingData.totalPrice.toLocaleString() + ' دج';
+            
+            // Update services in step 2
+            updateServicesDetails();
+        }
+        
+        // Update services details in step 2
+        function updateServicesDetails() {
+            const container = document.getElementById('selected-services-details');
+            container.innerHTML = bookingData.services.map((service, index) => `
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">${service.name}</h4>
+                            <p class="text-sm text-cool-gray">خدمة تحليل طبية متخصصة</p>
+                        </div>
+                        <span class="text-lg font-bold text-medical-blue">${service.price.toLocaleString()} دج</span>
+                    </div>
+                    <div class="text-sm text-cool-gray">
+                        <p>• نتائج خلال 24-48 ساعة</p>
+                        <p>• تقرير طبي مفصل</p>
+                        <p>• إمكانية استلام النتائج إلكترونياً</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Navigation functions
+        function nextStep() {
+            if (validateCurrentStep()) {
+                if (currentStep < 4) {
+                    currentStep++;
+                    updateStepDisplay();
+                    updateProgressBar();
+                    animateStepTransition();
+                }
+            }
+        }
+        
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepDisplay();
+                updateProgressBar();
+                animateStepTransition();
+            }
+        }
+        
+        // Update step display
+        function updateStepDisplay() {
+            // Hide all steps
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`booking-step-${i}`).classList.add('hidden');
+                document.getElementById(`step-${i}`).classList.remove('active', 'completed');
+            }
+            
+            // Show current step
+            document.getElementById(`booking-step-${currentStep}`).classList.remove('hidden');
+            
+            // Update step indicators
+            for (let i = 1; i < currentStep; i++) {
+                document.getElementById(`step-${i}`).classList.add('completed');
+            }
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+        }
+        
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = (currentStep / 4) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }
+        
+        // Animate step transition
+        function animateStepTransition() {
+            const currentStepElement = document.getElementById(`booking-step-${currentStep}`);
+            
+            anime({
+                targets: currentStepElement,
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 500,
+                easing: 'easeOutQuart'
+            });
+        }
+        
+        // Validate current step
+        function validateCurrentStep() {
+            switch (currentStep) {
+                case 1:
+                    return validatePersonalInfo();
+                case 2:
+                    return true; // Service details are pre-filled
+                case 3:
+                    return validatePaymentMethod();
+                default:
+                    return true;
+            }
+        }
+        
+        // Validate personal information
+        function validatePersonalInfo() {
+            const requiredFields = ['full-name', 'email', 'phone', 'birth-date', 'gender', 'national-id'];
+            let isValid = true;
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
+            
+            // Email validation
+            const email = document.getElementById('email').value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email && !emailRegex.test(email)) {
+                document.getElementById('email').classList.add('border-red-500');
+                isValid = false;
+            }
+            
+            // Phone validation
+            const phone = document.getElementById('phone').value;
+            const phoneRegex = /^[0-9]{10}$/;
+            if (phone && !phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''))) {
+                document.getElementById('phone').classList.add('border-red-500');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                showNotification('الرجاء إكمال جميع الحقول المطلوبة بشكل صحيح', 'error');
+            }
+            
+            return isValid;
+        }
+        
+        // Validate payment method
+        function validatePaymentMethod() {
+            if (!selectedPaymentMethod) {
+                showNotification('الرجاء اختيار طريقة الدفع', 'error');
+                return false;
+            }
+            
+            if (selectedPaymentMethod === 'card') {
+                const cardFields = ['card-number', 'card-expiry', 'card-cvv', 'card-holder'];
+                let isValid = true;
+                
+                cardFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (!field.value.trim()) {
+                        field.classList.add('border-red-500');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('border-red-500');
+                    }
+                });
+                
+                if (!isValid) {
+                    showNotification('الرجاء إكمال معلومات البطاقة', 'error');
+                }
+                
+                return isValid;
+            }
+            
+            return true;
+        }
+        
+        // Payment method selection
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            // Remove previous selections
+            document.querySelectorAll('.payment-method').forEach(pm => {
+                pm.classList.remove('selected');
+            });
+            
+            // Add selection to clicked method
+            event.currentTarget.classList.add('selected');
+            
+            // Show/hide card details
+            const cardDetails = document.getElementById('card-details');
+            if (method === 'card') {
+                cardDetails.classList.remove('hidden');
+            } else {
+                cardDetails.classList.add('hidden');
+            }
+            
+            // Update payment method display
+            const methodNames = {
+                'card': 'بطاقة بنكية',
+                'cash': 'دفع نقدي',
+                'transfer': 'تحويل بنكي',
+                'baridi': 'بريدي موب'
+            };
+            document.getElementById('payment-method-display').textContent = methodNames[method];
+        }
+        
+        // Final booking actions
+        function downloadBookingConfirmation() {
+            showNotification('جاري تحميل تأكيد الحجز...', 'info');
+            // In a real app, this would generate and download a PDF
+        }
+        
+        function goToProfile() {
+            window.location.href = 'profile.html';
+        }
+        
+        // Notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 ${
+                type === 'success' ? 'bg-success-green text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                'bg-medical-blue text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+    <script src="main.js"></script>
+</body>
+</html>
