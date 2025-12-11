@@ -128,16 +128,92 @@
                     <a href="#services" class="text-cool-gray hover:text-medical-blue transition-colors">الخدمات</a>
                 </div>
                 
-                <div class="flex items-center space-x-4">
-                    <button class="hidden md:block px-4 py-2 text-medical-blue border border-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all">
+                  
+                <!-- Desktop Auth Buttons -->
+                <div class="hidden md:flex items-center space-x-4 rtl:space-x-reverse" id="user-menu-desktop">
+                    <button class="px-4 py-2 text-medical-blue border border-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all" onclick="window.location.href='login.html'">
                         تسجيل دخول
                     </button>
-                    <button class="px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all">
+                    <button class="px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all" onclick="window.location.href='register.html'">
                         إنشاء حساب
                     </button>
                 </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-md text-cool-gray hover:text-medical-blue focus:outline-none" id="mobile-menu-button">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
         </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-0 bg-black/50 z-50 hidden" onclick="closeMobileMenu()">
+        <div class="absolute right-0 top-0 h-full w-80 bg-white shadow-xl" onclick="event.stopPropagation()">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-8">
+                    <div class="flex items-center space-x-3 rtl:space-x-reverse">
+                        <img src="resources/logo.png" alt="Clinicalab Logo" class="h-10 w-10">
+                        <span class="text-xl font-bold gradient-text">Clinicalab</span>
+                    </div>
+                    <button onclick="closeMobileMenu()" class="p-2 rounded-full hover:bg-gray-100">
+                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="space-y-4 mb-8">
+                    <a href="index.html" class="block py-3 px-4 text-medical-blue font-medium bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                        <i class="fas fa-home ml-2"></i> الرئيسية
+                    </a>
+                    <a href="search.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-search ml-2"></i> بحث عن مختبرات
+                    </a>
+                    <a href="#services" onclick="closeMobileMenu()" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-concierge-bell ml-2"></i> الخدمات
+                    </a>
+                    <a href="#how-it-works" onclick="closeMobileMenu()" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-cogs ml-2"></i> كيفية العمل
+                    </a>
+                    <a href="profile.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-user ml-2"></i> الملف الشخصي
+                    </a>
+                    <a href="bookings.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                        <i class="fas fa-calendar-alt ml-2"></i> حجوزاتي
+                    </a>
+                </div>
+                
+                <div class="space-y-3 auth-buttons">
+                    <button onclick="window.location.href='login.html'" class="w-full py-3 text-medical-blue border-2 border-medical-blue rounded-lg font-semibold hover:bg-medical-blue hover:text-white transition-all">
+                        تسجيل دخول
+                    </button>
+                    <button onclick="window.location.href='register.html'" class="w-full py-3 bg-gradient-to-r from-medical-blue to-soft-teal text-white rounded-lg font-semibold hover:shadow-lg transition-all">
+                        إنشاء حساب
+                    </button>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <div class="flex justify-center space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-facebook-f text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-twitter text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-instagram text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-linkedin-in text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </nav>
 
     <!-- Lab Header -->
