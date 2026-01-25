@@ -28,6 +28,7 @@
     
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -159,20 +160,40 @@
             background: #1d4ed8;
         }
         
-        /* Loading Animation */
-        .loading-spinner {
-            animation: spin 1s linear infinite;
+        /* 3D Button Styles */
+        .button-3d {
+            transform: perspective(1000px) rotateX(5deg) rotateY(-5deg);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            position: relative;
         }
         
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .button-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.1) 100%);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+        
+        .button-3d:hover {
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3), 0 10px 25px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+        
+        .button-3d:active {
+            transform: perspective(1000px) rotateX(2deg) rotateY(2deg) translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 3px 10px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.1);
         }
     </style>
 </head>
-<body class="font-tajawal bg-gray-50">
+<body class="font-tajawal bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+    <nav class="fixed top-0 w-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-sm z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-4 rtl:space-x-reverse">
@@ -184,8 +205,8 @@
                 <div class="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
                     <a href="index.html" class="text-medical-blue font-medium hover:text-soft-teal transition-colors">الرئيسية</a>
                     <a href="search.html" class="text-cool-gray hover:text-medical-blue transition-colors">بحث عن مختبرات</a>
-                    <a href="#services" class="text-cool-gray hover:text-medical-blue transition-colors">الخدمات</a>
-                    <a href="#how-it-works" class="text-cool-gray hover:text-medical-blue transition-colors">كيفية العمل</a>
+                    <a href="services.html#services" class="text-cool-gray hover:text-medical-blue transition-colors">الخدمات</a>
+                    <a href="services.html#how-it-works" class="text-cool-gray hover:text-medical-blue transition-colors">كيفية العمل</a>
                 </div>
                 
                 <!-- Desktop Auth Buttons -->
@@ -197,6 +218,11 @@
                         إنشاء حساب
                     </button>
                 </div>
+
+                <!-- Dark Mode Toggle -->
+                <button id="dark-mode-toggle" class="hidden md:flex p-2 rounded-md text-cool-gray dark:text-gray-300 hover:text-medical-blue dark:hover:text-medical-blue transition-colors">
+                    <i id="dark-mode-icon" class="fas fa-moon text-lg"></i>
+                </button>
 
                 <!-- Mobile Menu Button -->
                 <button class="md:hidden p-2 rounded-md text-cool-gray hover:text-medical-blue focus:outline-none" id="mobile-menu-button">
@@ -225,24 +251,32 @@
                 </div>
                 
                 <div class="space-y-4 mb-8">
-                    <a href="index.html" class="block py-3 px-4 text-medical-blue font-medium bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                    <a href="index.html" class="block py-3 px-4 text-medical-blue font-medium bg-blue-50 dark:bg-blue-900/50 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors">
                         <i class="fas fa-home ml-2"></i> الرئيسية
                     </a>
-                    <a href="search.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                    <a href="search.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
                         <i class="fas fa-search ml-2"></i> بحث عن مختبرات
                     </a>
-                    <a href="#services" onclick="closeMobileMenu()" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                    <a href="services.html#services" onclick="closeMobileMenu()" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
                         <i class="fas fa-concierge-bell ml-2"></i> الخدمات
                     </a>
-                    <a href="#how-it-works" onclick="closeMobileMenu()" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                    <a href="services.html#how-it-works" onclick="closeMobileMenu()" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
                         <i class="fas fa-cogs ml-2"></i> كيفية العمل
                     </a>
-                    <a href="profile.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                    <a href="profile.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
                         <i class="fas fa-user ml-2"></i> الملف الشخصي
                     </a>
-                    <a href="bookings.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 rounded-lg transition-colors">
+                    <a href="bookings.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
                         <i class="fas fa-calendar-alt ml-2"></i> حجوزاتي
                     </a>
+                    <!-- Dark Mode Toggle Mobile -->
+                    <button id="dark-mode-toggle-mobile" class="block w-full py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors text-right">
+                        <i id="dark-mode-icon-mobile" class="fas fa-moon ml-2"></i> الوضع المظلم
+                    </button>
+                    <!-- Dark Mode Toggle Mobile -->
+                    <button id="dark-mode-toggle-mobile" class="block w-full py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors text-right">
+                        <i id="dark-mode-icon-mobile" class="fas fa-moon ml-2"></i> الوضع المظلم
+                    </button>
                 </div>
                 
                 <div class="space-y-3 auth-buttons">
@@ -282,45 +316,45 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
                     <div class="text-center lg:text-right">
-                        <h1 class="hero-title text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+                        <h1 class="hero-title text-5xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
                             <span class="gradient-text">Clinicalab</span>
                             <br>
                             <span id="typed-text"></span>
                         </h1>
                         
-                        <p class="text-lg lg:text-xl text-cool-gray mb-8 leading-relaxed">
+                        <p class="text-lg lg:text-xl text-cool-gray dark:text-gray-300 mb-8 leading-relaxed">
                             منصتك الجزائرية الموثوقة لربط المرضى بأفضل مختبرات التحاليل الطبية. 
                             مقارنة شفافة للأسعار، حجز فوري، وخدمات طبية موثوقة في جميع الولايات.
                         </p>
                         
-                        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
-                            <button onclick="window.location.href='search.html'" class="px-6 py-4 bg-medical-blue text-white rounded-xl hover:bg-blue-700 transition-all pulse-glow font-semibold text-base sm:text-lg">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 justify-center lg:justify-start mb-12">
+                            <button onclick="window.location.href='search.html'" class="button-3d px-6 py-4 bg-medical-blue text-white rounded-xl hover:bg-blue-700 transition-all pulse-glow font-semibold text-base sm:text-lg shadow-lg">
                                 <i class="fas fa-search ml-2"></i> ابدأ البحث عن مختبر
                             </button>
-                            <button onclick="window.location.href='#how-it-works'" class="px-6 py-4 border-2 border-medical-blue text-medical-blue rounded-xl hover:bg-medical-blue hover:text-white transition-all font-semibold text-base sm:text-lg">
+                            <button onclick="window.location.href='#how-it-works'" class="button-3d px-6 py-4 border-2 border-medical-blue text-medical-blue rounded-xl hover:bg-medical-blue hover:text-white transition-all font-semibold text-base sm:text-lg shadow-lg">
                                 <i class="fas fa-play-circle ml-2"></i> كيفية العمل
                             </button>
+                            <button onclick="window.location.href='https://zirxis.github.io/medicine/'" class="button-3d px-6 py-4 bg-gradient-to-r from-success-green to-medical-blue text-white rounded-xl hover:shadow-xl transition-all font-semibold text-base sm:text-lg shadow-lg">
+                                <i class="fas fa-book-medical ml-2"></i> موسوعة طبية
+                            </button>
+                            <button onclick="window.location.href='https://zirxis.github.io/estashir/'" class="button-3d px-6 py-4 bg-gradient-to-r from-warm-orange to-soft-teal text-white rounded-xl hover:shadow-xl transition-all font-semibold text-base sm:text-lg shadow-lg">
+                                <i class="fas fa-comments ml-2"></i> استشارات طبية
+                            </button>
                         </div>
-						                            <button onclick="window.location.href='https://zirxis.github.io/medicine/'" class="px-6 py-4 bg-medical-blue text-white rounded-xl hover:bg-blue-700 transition-all pulse-glow font-semibold text-base sm:text-lg">
-                                <i class="fas fa-search ml-2"></i> موسوعة طبية 
-                            </button>
-							                            <button onclick="window.location.href='https://zirxis.github.io/estashir/'" class="px-6 py-4 bg-medical-blue text-white rounded-xl hover:bg-blue-700 transition-all pulse-glow font-semibold text-base sm:text-lg">
-                                <i class="fas fa-search ml-2"></i> استشارات طبية
-                            </button>
                         
                         <!-- Stats -->
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-center">
-                            <div class="floating-element bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg">
+                            <div class="floating-element bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg">
                                 <div class="text-2xl sm:text-3xl font-bold text-medical-blue">500+</div>
-                                <div class="text-cool-gray text-sm sm:text-base">مختبر موثوق</div>
+                                <div class="text-cool-gray dark:text-gray-300 text-sm sm:text-base">مختبر موثوق</div>
                             </div>
-                            <div class="floating-element bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg" style="animation-delay: -2s;">
+                            <div class="floating-element bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg" style="animation-delay: -2s;">
                                 <div class="text-2xl sm:text-3xl font-bold text-soft-teal">50,000+</div>
-                                <div class="text-cool-gray text-sm sm:text-base">حجز ناجح</div>
+                                <div class="text-cool-gray dark:text-gray-300 text-sm sm:text-base">حجز ناجح</div>
                             </div>
-                            <div class="floating-element bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg" style="animation-delay: -4s;">
+                            <div class="floating-element bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg" style="animation-delay: -4s;">
                                 <div class="text-2xl sm:text-3xl font-bold text-warm-orange">98%</div>
-                                <div class="text-cool-gray text-sm sm:text-base">رضا المرضى</div>
+                                <div class="text-cool-gray dark:text-gray-300 text-sm sm:text-base">رضا المرضى</div>
                             </div>
                         </div>
                     </div>
@@ -341,10 +375,10 @@
 
     <!-- Rest of the index.html content remains the same but with responsive improvements -->
     <!-- Quick Search Section -->
-    <section class="py-12 sm:py-16 bg-white">
+    <section class="py-12 sm:py-16 bg-white dark:bg-gray-800">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="search-container rounded-2xl p-6 sm:p-8 shadow-xl">
-                <h2 class="section-title text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-6 sm:mb-8">ابحث عن مختبر التحاليل المناسب</h2>
+            <div class="search-container bg-white/95 dark:bg-gray-700/95 rounded-2xl p-6 sm:p-8 shadow-xl">
+                <h2 class="section-title text-2xl sm:text-3xl font-bold text-center text-gray-900 dark:text-white mb-6 sm:mb-8">ابحث عن مختبر التحاليل المناسب</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div class="md:col-span-2">
@@ -393,7 +427,7 @@
     <!-- ... -->
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
+    <footer class="bg-gray-900 dark:bg-gray-800 text-white py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
                 <div class="flex items-center justify-center space-x-4 mb-6">
@@ -453,8 +487,54 @@
             if (e.key === 'Escape') closeMobileMenu();
         });
         
+        // Dark Mode Toggle
+        function initDarkMode() {
+            const html = document.documentElement;
+            const toggle = document.getElementById('dark-mode-toggle');
+            const toggleMobile = document.getElementById('dark-mode-toggle-mobile');
+            const icon = document.getElementById('dark-mode-icon');
+            const iconMobile = document.getElementById('dark-mode-icon-mobile');
+            
+            // Check for saved theme preference or default to light mode
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                iconMobile.classList.remove('fa-moon');
+                iconMobile.classList.add('fa-sun');
+            }
+            
+            // Toggle function
+            function toggleDarkMode() {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                    iconMobile.classList.remove('fa-sun');
+                    iconMobile.classList.add('fa-moon');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                    iconMobile.classList.remove('fa-moon');
+                    iconMobile.classList.add('fa-sun');
+                }
+            }
+            
+            toggle.addEventListener('click', toggleDarkMode);
+            toggleMobile.addEventListener('click', () => {
+                toggleDarkMode();
+                closeMobileMenu();
+            });
+        }
+        
         // Initialize Typed.js
         document.addEventListener('DOMContentLoaded', function() {
+            initDarkMode();
+            
             if (typeof Typed !== 'undefined') {
                 new Typed('#typed-text', {
                     strings: ['صحتك... أولويتنا', 'مختبرات موثوقة', 'أسعار شفافة', 'حجز سهل'],

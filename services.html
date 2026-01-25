@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الخدمات وكيفية العمل - Clinicalab</title>
+    <meta name="description" content="تعرف على خدمات Clinicalab وكيفية عمل المنصة لربط المرضى بمختبرات التحاليل الطبية في الجزائر.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#2563EB',
+                        'soft-teal': '#0891B2',
+                        'warm-orange': '#F59E0B',
+                        'cool-gray': '#64748B',
+                        'success-green': '#059669',
+                        'warning-amber': '#D97706',
+                        'light-blue': '#DBEAFE',
+                        'light-teal': '#CFFAFE'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'tajawal': ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .hero-bg {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .step-card {
+            transition: all 0.3s ease;
+        }
+        
+        .step-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #2563EB, #0891B2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* Mobile Menu Styles */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #2563EB;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body class="font-tajawal bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                    <img src="resources/logo.png" alt="Clinicalab Logo" class="h-10 w-10">
+                    <span class="text-2xl font-bold gradient-text">Clinicalab</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
+                    <a href="index.html" class="text-cool-gray hover:text-medical-blue transition-colors">الرئيسية</a>
+                    <a href="search.html" class="text-cool-gray hover:text-medical-blue transition-colors">بحث عن مختبرات</a>
+                    <a href="#services" class="text-medical-blue font-medium hover:text-soft-teal transition-colors">الخدمات</a>
+                    <a href="#how-it-works" class="text-cool-gray hover:text-medical-blue transition-colors">كيفية العمل</a>
+                </div>
+                
+                <!-- Desktop Auth Buttons -->
+                <div class="hidden md:flex items-center space-x-4 rtl:space-x-reverse" id="user-menu-desktop">
+                    <button class="px-4 py-2 text-medical-blue border border-medical-blue rounded-lg hover:bg-medical-blue hover:text-white transition-all" onclick="window.location.href='login.html'">
+                        تسجيل دخول
+                    </button>
+                    <button class="px-4 py-2 bg-medical-blue text-white rounded-lg hover:bg-blue-700 transition-all" onclick="window.location.href='register.html'">
+                        إنشاء حساب
+                    </button>
+                </div>
+
+                <!-- Dark Mode Toggle -->
+                <button id="dark-mode-toggle" class="hidden md:flex p-2 rounded-md text-cool-gray dark:text-gray-300 hover:text-medical-blue dark:hover:text-medical-blue transition-colors">
+                    <i id="dark-mode-icon" class="fas fa-moon text-lg"></i>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-md text-cool-gray hover:text-medical-blue focus:outline-none" id="mobile-menu-button">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-0 bg-black/50 z-50 hidden" onclick="closeMobileMenu()">
+        <div class="absolute right-0 top-0 h-full w-80 bg-white dark:bg-gray-800 shadow-xl" onclick="event.stopPropagation()">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-8">
+                    <div class="flex items-center space-x-3 rtl:space-x-reverse">
+                        <img src="resources/logo.png" alt="Clinicalab Logo" class="h-10 w-10">
+                        <span class="text-xl font-bold gradient-text">Clinicalab</span>
+                    </div>
+                    <button onclick="closeMobileMenu()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="space-y-4 mb-8">
+                    <a href="index.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-home ml-2"></i> الرئيسية
+                    </a>
+                    <a href="search.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-search ml-2"></i> بحث عن مختبرات
+                    </a>
+                    <a href="#services" onclick="closeMobileMenu()" class="block py-3 px-4 text-medical-blue font-medium bg-blue-50 dark:bg-blue-900/50 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors">
+                        <i class="fas fa-concierge-bell ml-2"></i> الخدمات
+                    </a>
+                    <a href="#how-it-works" onclick="closeMobileMenu()" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-cogs ml-2"></i> كيفية العمل
+                    </a>
+                    <a href="profile.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-user ml-2"></i> الملف الشخصي
+                    </a>
+                    <a href="bookings.html" class="block py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                        <i class="fas fa-calendar-alt ml-2"></i> حجوزاتي
+                    </a>
+                    <!-- Dark Mode Toggle Mobile -->
+                    <button id="dark-mode-toggle-mobile" class="block w-full py-3 px-4 text-cool-gray hover:text-medical-blue hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors text-right">
+                        <i id="dark-mode-icon-mobile" class="fas fa-moon ml-2"></i> الوضع المظلم
+                    </button>
+                </div>
+                
+                <div class="space-y-3 auth-buttons">
+                    <button onclick="window.location.href='login.html'" class="w-full py-3 text-medical-blue border-2 border-medical-blue rounded-lg font-semibold hover:bg-medical-blue hover:text-white transition-all">
+                        تسجيل دخول
+                    </button>
+                    <button onclick="window.location.href='register.html'" class="w-full py-3 bg-gradient-to-r from-medical-blue to-soft-teal text-white rounded-lg font-semibold hover:shadow-lg transition-all">
+                        إنشاء حساب
+                    </button>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-center space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-facebook-f text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-twitter text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-instagram text-lg"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-medical-blue transition-colors">
+                            <i class="fab fa-linkedin-in text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center pt-16">
+        <div class="w-full">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h1 class="text-5xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                        خدمات <span class="gradient-text">Clinicalab</span>
+                    </h1>
+                    
+                    <p class="text-lg lg:text-xl text-cool-gray dark:text-gray-300 mb-8 leading-relaxed max-w-3xl mx-auto">
+                        منصة شاملة للخدمات الطبية المخبرية في الجزائر. نقدم حلولاً مبتكرة لربط المرضى بالمختبرات الموثوقة بأسعار شفافة وخدمة متميزة.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                        <button onclick="window.location.href='search.html'" class="px-6 py-4 bg-medical-blue text-white rounded-xl hover:bg-blue-700 transition-all font-semibold text-base sm:text-lg shadow-lg">
+                            <i class="fas fa-search ml-2"></i> ابدأ البحث الآن
+                        </button>
+                        <button onclick="document.getElementById('services').scrollIntoView({behavior: 'smooth'})" class="px-6 py-4 border-2 border-medical-blue text-medical-blue rounded-xl hover:bg-medical-blue hover:text-white transition-all font-semibold text-base sm:text-lg">
+                            <i class="fas fa-arrow-down ml-2"></i> تعرف على الخدمات
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-16 sm:py-20 bg-white dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">خدماتنا الطبية المتكاملة</h2>
+                <p class="text-lg text-cool-gray dark:text-gray-300 max-w-2xl mx-auto">
+                    نقدم مجموعة شاملة من الخدمات الطبية المخبرية لتلبية جميع احتياجاتك الصحية
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg">
+                    <div class="w-16 h-16 bg-gradient-to-r from-medical-blue to-soft-teal rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-search text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">البحث المتقدم عن المختبرات</h3>
+                    <p class="text-cool-gray dark:text-gray-300 leading-relaxed">
+                        ابحث بسهولة عن أقرب المختبرات المعتمدة في منطقتك مع مقارنة الأسعار والتقييمات
+                    </p>
+                </div>
+                
+                <!-- Service 2 -->
+                <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg">
+                    <div class="w-16 h-16 bg-gradient-to-r from-success-green to-medical-blue rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-calendar-check text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">الحجز الفوري</h3>
+                    <p class="text-cool-gray dark:text-gray-300 leading-relaxed">
+                        احجز موعدك في المختبر المفضل لديك بضغطة زر واحدة مع تأكيد فوري
+                    </p>
+                </div>
+                
+                <!-- Service 3 -->
+                <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg">
+                    <div class="w-16 h-16 bg-gradient-to-r from-warm-orange to-soft-teal rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">مقارنة الأسعار</h3>
+                    <p class="text-cool-gray dark:text-gray-300 leading-relaxed">
+                        قارن بين أسعار التحاليل في مختلف المختبرات للحصول على أفضل العروض
+                    </p>
+                </div>
+                
+                <!-- Service 4 -->
+                <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg">
+                    <div class="w-16 h-16 bg-gradient-to-r from-medical-blue to-success-green rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-file-medical text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">النتائج الإلكترونية</h3>
+                    <p class="text-cool-gray dark:text-gray-300 leading-relaxed">
+                        احصل على نتائج تحاليلك إلكترونياً مع شرح مفصل من الأطباء المختصين
+                    </p>
+                </div>
+                
+                <!-- Service 5 -->
+                <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg">
+                    <div class="w-16 h-16 bg-gradient-to-r from-soft-teal to-warm-orange rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-user-md text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">استشارات طبية</h3>
+                    <p class="text-cool-gray dark:text-gray-300 leading-relaxed">
+                        استشر أطباء مختصين عبر المنصة لفهم نتائج تحاليلك وخطط العلاج
+                    </p>
+                </div>
+                
+                <!-- Service 6 -->
+                <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg">
+                    <div class="w-16 h-16 bg-gradient-to-r from-success-green to-warm-orange rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-alt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">الجودة والأمان</h3>
+                    <p class="text-cool-gray dark:text-gray-300 leading-relaxed">
+                        جميع المختبرات معتمدة وتتبع معايير الجودة العالمية لضمان سلامتك
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-16 sm:py-20 bg-gray-50 dark:bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">كيف تعمل المنصة؟</h2>
+                <p class="text-lg text-cool-gray dark:text-gray-300 max-w-2xl mx-auto">
+                    خطوات بسيطة للحصول على خدمات طبية موثوقة في أي وقت وأي مكان
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Step 1 -->
+                <div class="step-card text-center">
+                    <div class="w-20 h-20 bg-medical-blue rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg">
+                        1
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">التسجيل</h3>
+                    <p class="text-cool-gray dark:text-gray-300 leading-relaxed">
+                        أنشئ حسابك الشخصي مجاناً وأدخل بياناتك الأساسية للبدء في استخدام المنصة
+                    </p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="step-card text-center">
+                    <div class="w-20 h-20 bg-soft-teal rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg">
+                        2
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">البحث والاختيار</h3>
+                    <p class="text-cool-gray dark:text-gray-300 leading-relaxed">
+                        ابحث عن التحاليل المطلوبة واختر المختبر الأنسب لك من حيث الموقع والسعر
+                    </p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="step-card text-center">
+                    <div class="w-20 h-20 bg-success-green rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg">
+                        3
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">الحجز والدفع</h3>
+                    <p class="text-cool-gray dark:text-gray-300 leading-relaxed">
+                        احجز موعدك وادفع بأمان عبر المنصة مع خصومات حصرية على التحاليل
+                    </p>
+                </div>
+                
+                <!-- Step 4 -->
+                <div class="step-card text-center">
+                    <div class="w-20 h-20 bg-warm-orange rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold shadow-lg">
+                        4
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">الحصول على النتائج</h3>
+                    <p class="text-cool-gray dark:text-gray-300 leading-relaxed">
+                        احصل على نتائج تحاليلك إلكترونياً مع شرح طبي مفصل ونصائح صحية
+                    </p>
+                </div>
+            </div>
+            
+            <!-- CTA Section -->
+            <div class="text-center mt-16">
+                <div class="bg-gradient-to-r from-medical-blue to-soft-teal rounded-2xl p-8 sm:p-12 shadow-xl">
+                    <h3 class="text-2xl sm:text-3xl font-bold text-white mb-4">جاهز للبدء؟</h3>
+                    <p class="text-white/90 mb-8 text-lg">
+                        انضم إلى آلاف المرضى الذين يثقون بمنصة Clinicalab لخدماتهم الطبية
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onclick="window.location.href='register.html'" class="px-8 py-4 bg-white text-medical-blue rounded-xl hover:bg-gray-100 transition-all font-semibold text-lg shadow-lg">
+                            <i class="fas fa-user-plus ml-2"></i> إنشاء حساب مجاني
+                        </button>
+                        <button onclick="window.location.href='search.html'" class="px-8 py-4 border-2 border-white text-white rounded-xl hover:bg-white hover:text-medical-blue transition-all font-semibold text-lg">
+                            <i class="fas fa-search ml-2"></i> ابحث عن مختبر
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 dark:bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-4 mb-6">
+                    <img src="resources/logo.png" alt="Clinicalab Logo" class="h-12 w-12">
+                    <span class="text-2xl sm:text-3xl font-bold gradient-text">Clinicalab</span>
+                </div>
+                
+                <p class="text-gray-400 mb-6 max-w-2xl mx-auto text-sm sm:text-base">
+                    المنصة الجزائرية الرائدة لربط المرضى بمختبرات التحاليل الطبية الموثوقة. 
+                    شفافية في الأسعار، سهولة في الحجز، وموثوقية في النتائج.
+                </p>
+                
+                <div class="flex flex-wrap justify-center gap-4 sm:gap-8 mb-6">
+                    <a href="index.html" class="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">الرئيسية</a>
+                    <a href="#services" class="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">الخدمات</a>
+                    <a href="#how-it-works" class="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">كيفية العمل</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm sm:text-base">اتصل بنا</a>
+                </div>
+                
+                <div class="border-t border-gray-800 pt-6">
+                    <p class="text-gray-400 text-sm sm:text-base">
+                        © 2025 Clinicalab. جميع الحقوق محفوظة. منصة جزائرية للخدمات الطبية.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script src="auth.js"></script>
+
+    <script>
+        // Mobile Menu Functions
+        function openMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.remove('hidden');
+            setTimeout(() => {
+                menu.classList.add('open');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.remove('open');
+            setTimeout(() => {
+                menu.classList.add('hidden');
+            }, 300);
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Event Listeners
+        document.getElementById('mobile-menu-button').addEventListener('click', openMobileMenu);
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMobileMenu();
+        });
+        
+        // Dark Mode Toggle
+        function initDarkMode() {
+            const html = document.documentElement;
+            const toggle = document.getElementById('dark-mode-toggle');
+            const toggleMobile = document.getElementById('dark-mode-toggle-mobile');
+            const icon = document.getElementById('dark-mode-icon');
+            const iconMobile = document.getElementById('dark-mode-icon-mobile');
+            
+            // Check for saved theme preference or default to light mode
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                iconMobile.classList.remove('fa-moon');
+                iconMobile.classList.add('fa-sun');
+            }
+            
+            // Toggle function
+            function toggleDarkMode() {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                    iconMobile.classList.remove('fa-sun');
+                    iconMobile.classList.add('fa-moon');
+                } else {
+                    html.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                    iconMobile.classList.remove('fa-moon');
+                    iconMobile.classList.add('fa-sun');
+                }
+            }
+            
+            toggle.addEventListener('click', toggleDarkMode);
+            toggleMobile.addEventListener('click', () => {
+                toggleDarkMode();
+                closeMobileMenu();
+            });
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initDarkMode();
+        });
+    </script>
+</body>
+</html>
